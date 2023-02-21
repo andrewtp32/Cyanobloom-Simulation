@@ -1,0 +1,35 @@
+<!--launch the phd filter -->
+
+
+<launch>
+<!--python plotting script/--> 
+<node name="plotter" pkg="cyanob_phd_filter"  type="bloom_phd_plot.py" output="screen"   />
+
+<!--simulator launch/--> 
+<include file="$(find cyanobloom_simulation)/launch/yawgoog_pond.launch"  />
+
+
+<!--external file path and its topic name/-->
+<param name="readfile/topic_name" type="string" value="particle_list_for_gazebo" />
+
+<param name="readfile/file_path" type="string" value="$(find cyanob_phd_filter)results/coordinates.txt" />
+
+<!--<param name="output/file_path" type="string" value="$(find cyanob_phd_filter)src/output.txt" />/--> 
+
+
+<!--topic names to subscribe and publish/-->
+<param name="meas_topic_name" type="string" value="/bloom_locations_topic" />
+
+<param name="drone_pose" type="string" value="/drone_0/gt_pose" /><!--drone pose-->
+
+<param name="usv_measurement" type="string" value="/bloom_concentration_value_at_USV_location" /><!--boat meas-->
+
+<param name="Publish_results_topic" type="string" value="filter_results" />
+
+
+<!--node to read external files/-->
+<node name="Cyanob_phd_filter" pkg="cyanob_phd_filter"  type="bloom_filter_node" output="screen"/>
+
+
+
+</launch>

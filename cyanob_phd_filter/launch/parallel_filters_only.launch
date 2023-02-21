@@ -1,0 +1,65 @@
+<!--launch complete system -->
+<!--Create seperate filters with different parameters which will run simultaneiously  -->
+<launch>
+
+<!--.............................PHD FILTER Launch Node...................../-->
+<!--
+	To create a new filter -> Copy and paste an entire group 
+	Change group number accordingly
+	Change the parameters in new pasted filter copy accordingly
+	create seperate folder for each filter and add its path to "parallelfilter/folder_path"
+	Add the file containing initial points inside above folder
+/-->
+
+<!-- Diagnostics node
+<node name="System_manager_node" pkg="cyanob_phd_filter"  type="system_diagnostics_parallel" output="screen" />
+/-->
+<group ns="3">
+
+
+		<!-- filter variables -->
+		<param name="parallelfilter/noise" type="double" value="15.0"/>	<!-- noise -->
+		<param name="parallelfilter/wind" type="int" value="30" />		<!-- wind -->
+		<param name="parallelfilter/wind_angle" type="int" value="60"/> 	<!-- wind direction from north. angle in degrees -->
+		<param name="parallelfilter/temp" type="int" value="30"/> 	<!-- tempreture in celcius. mid value is 25 -->
+
+		<!-- file path of blooms location file and its name -->
+
+		<param name="parallelfilter/file_path" type="string" value="initial_ground_truth.txt"/>
+		<param name="parallelfilter/folder_path" type="string" value="$(find cyanob_phd_filter)results/NEWindReflect/3/" />
+		<param name="parallelfilter/results_topicName" type="string" value="filter_results" />
+
+
+	<node name="Cyanob_phd_filter" pkg="cyanob_phd_filter"  type="parallel_filter" output="screen"> </node>
+	
+	<!--python plotting script/--> 
+	<node name="plotter" pkg="cyanob_phd_filter"  type="bloom_phd_plot.py" output="screen"   >	</node>
+
+</group>
+
+<group ns="4">
+
+
+		<!-- filter variables -->
+		<param name="parallelfilter/noise" type="double" value="15.0"/>	<!-- noise -->
+		<param name="parallelfilter/wind" type="int" value="40" />		<!-- wind -->
+		<param name="parallelfilter/wind_angle" type="int" value="65"/> 	<!-- wind direction from north. angle in degrees -->
+		<param name="parallelfilter/temp" type="int" value="30"/> 	<!-- tempreture in celcius. mid value is 25 -->
+
+		<!-- file path of blooms location file and its name -->
+
+		<param name="parallelfilter/file_path" type="string" value="initial_ground_truth.txt"/>
+		<param name="parallelfilter/folder_path" type="string" value="$(find cyanob_phd_filter)results/NEWindReflect/4/" />
+		<param name="parallelfilter/results_topicName" type="string" value="filter_results" />
+
+
+	<node name="Cyanob_phd_filter" pkg="cyanob_phd_filter"  type="parallel_filter" output="screen"> </node>
+	
+	<!--python plotting script/--> 
+	<node name="plotter" pkg="cyanob_phd_filter"  type="bloom_phd_plot.py" output="screen"   >	</node>
+
+</group>
+
+
+
+</launch>

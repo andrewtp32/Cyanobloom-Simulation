@@ -1,0 +1,51 @@
+<!--launching the system to run parallel filters
+This launch file will launch following nodes
+	-Gazebo simulation via yawgoo pond launch file
+	-blooms ground truth ti gazebo via blooms_publisher_node
+	-System Diagnostics node
+	-drone velocity node via drone_command_velocities.py
+	-Drone pos manager via drone_positioning_manager.py
+	-filer user interface
+ -->
+
+<launch>
+
+<!--simulator launch/-->
+<include file="$(find cyanobloom_simulation)/launch/yawgoog_pond.launch"  />
+
+<!--Parameters/-->
+<!--how many filter runs should perform/-->
+<!--should equal to number of list of blooms/-->
+<param name="cycles" type="int" value="10"/>
+
+
+<!--node to read and publish blooms into gazebo/-->
+<!--Ground Truth file location and fisrt file name/-->
+	<param name="_init_filename" type="string" value="bloom_coordinates_northeast_wind_drift_with_noise_and_reflection0.txt"/>
+	<param name="bloomLoc_fpath" type="string" value="$(find cyanob_phd_filter)results/1.groundtruth_blocations/bloom_coordinates_northeast_wind_drift_with_noise_and_reflection/" />
+	<param name="bloom_topic" type="string" value="particle_list_for_gazebo" />
+<node name="blooms_publisher_node" pkg="cyanob_phd_filter"  type="blooms_publisher_node" output="screen"  />
+
+
+
+
+<!--Common topic names to subscribe and publish/-->
+<param name="meas_topic_name" type="string" value="/bloom_locations_topic" />
+<param name="diaganostic_topicName" type="string" value="system_Diagnostics" />
+<param name="drone_pose" type="string" value="/drone_0/gt_pose" /><!--drone pose-->
+
+
+<!--python drone velocity/--> 
+<node name="drone_velocity" pkg="cyanobloom_simulation"  type="drone_command_velocities.py"/>
+
+<!--python pos manager velocity /-->
+<node name="drone_pos_manager" pkg="cyanobloom_simulation"  type="drone_positioning_manager.py" output="screen"/>
+
+<!-- Diagnostics node/-->
+<node name="System_manager_node" pkg="cyanob_phd_filter"  type="system_diagnostics_parallel" output="screen"  required="true" />
+
+<!--python gui/--> 
+<node name="Filter_User_Interface" pkg="cyanob_phd_filter"  type="gui.py" required="true"/>
+
+
+</launch>

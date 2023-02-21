@@ -1,0 +1,25 @@
+
+<launch>
+
+<!--simulator launch 
+<include file="$(find cyanobloom_simulation)/launch/yawgoog_pond.launch"  />
+/-->
+
+<param name="readfile/topic_name" type="string" value="particle_list_for_gazebo" />
+
+<param name="readfile/file_path" type="string" value="$(find cyanob_phd_filter)results/coordinates.txt" />
+
+<param name="output/file_path" type="string" value="$(find cyanob_phd_filter)src/output.txt" />
+
+<!--topic names to subscribe and publish/-->
+<param name="meas_topic_name" type="string" value="/bloom/bloom_locations_topic" />
+
+<param name="Publish_results_topic" type="string" value="filter_results" />
+
+
+<!--node to read external files/-->
+<node name="Cyanob_phd_filter" pkg="cyanob_phd_filter"  type="test_phd_class" output="screen"   />
+
+
+
+</launch>
