@@ -9,7 +9,7 @@ There are explainations on:
 * [Usage](#usage)
 * [Support](#support)
 * [Roadmap](#roadmap)
-* [Authors and Acknowledgment](#authors-and-acknowledgment)
+* [Authors and Acknowledgments](#authors-and-acknowledgments)
 * [Lisence](#lisence)
 
 For more on the background of cyanobacterial blooming events: (reference a paper or two)
@@ -40,7 +40,7 @@ summary of section
 
 summary of section
 
-## Authors and Acknowledgment
+## Authors and Acknowledgments
 
 **Author:** 
 
