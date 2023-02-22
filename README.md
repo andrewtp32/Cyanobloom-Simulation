@@ -1,4 +1,4 @@
-notes to self:
+**notes to self for final edit**
 * add those refences in the intro
 
 # Cyanobacterial Bloom Simulator
