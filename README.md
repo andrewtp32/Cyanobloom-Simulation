@@ -59,6 +59,7 @@ summary of section
 ## Frequently Asked Questions
 #### How do I screenshot the openstreetmap file on Windows? how do i screenshot on MAC?
 #### Simulation is not returning any Ground Truths
+#### How do I install opencv or any other library
 
 ## Licenses 
 Copyright (c) 2020-present Andrew Phillips, Thivanka Perera, Paolo Stegagno, and other contributors
