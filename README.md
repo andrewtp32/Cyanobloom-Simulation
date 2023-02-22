@@ -9,8 +9,8 @@ wap wap wap
 
 ## FAQ
 Frequently Asked Questions
-### How do I screenshot the openstreetmap file on Windows? how do i screenshot on MAC?
-### Simulation is not returning any Ground Truths
+#### How do I screenshot the openstreetmap file on Windows? how do i screenshot on MAC?
+#### Simulation is not returning any Ground Truths
 
 
 
