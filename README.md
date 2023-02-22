@@ -1,5 +1,33 @@
-# Cyanobloom-Simulation
-Provide a summary here
+
+
+# Cyanobacterial Bloom Simulator
+This README file describes the application and the "how to" for simulating cyanobacterial bloom measurement gathering via Unmanned Aerial Vehicles (UAV).
+
+There are explainations on: 
+* [Installation] (#Installation)
+* Installation
+* Usage
+* Support
+* Roadmap
+* Contributing
+* Authors and Acknoledgment
+* Lisence
+
+For more on the background of cyanobacterial blooming events: (reference a paper or two)
+
+For in-depth explainations on the theories and development of this project, see: (reference my thesis)
+
+## Installation
+summary of section
+
+#### Requirements
+description of whatever
+
+## Heading
+summary of section
+
+### Subheading
+description of whatever
 
 ## Heading
 summary of section
