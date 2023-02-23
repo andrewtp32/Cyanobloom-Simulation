@@ -5,7 +5,7 @@
 This README file describes the application and the "how to" for simulating cyanobacterial bloom measurement gathering via Unmanned Aerial Vehicles (UAV).
 
 There are explainations on: 
-* [Instalation](#instalation)
+* [Installation](#installation)
 * [Usage](#usage)
 * [Support](#support)
 * [Roadmap](#roadmap)
@@ -16,13 +16,13 @@ For more on the background of cyanobacterial blooming events: (reference a paper
 
 For in-depth explainations on the theories and development of this project, see: (reference my thesis)
 
-## Instalation
-
-summary of section
+## Installation
 
 ### Requirements
 
-description of whatever
+description of whatever libraries need to be installed
+
+### Installation of package
 
 ## Usage
 
