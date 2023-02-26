@@ -1,5 +1,6 @@
 **notes to self for final edit:**
 * add those refences in the intro
+* do a description of each folder in the file
 
 # Cyanobacterial Bloom Simulator
 This README file describes the application and the "how to" for simulating cyanobacterial bloom measurement gathering via Unmanned Aerial Vehicles (UAV).
