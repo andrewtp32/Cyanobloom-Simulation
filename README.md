@@ -41,7 +41,7 @@ summary of section
 
 summary of section
 
-## Authors and Acknowledgments
+## Author and Acknowledgments
 
 **Author:** 
 
