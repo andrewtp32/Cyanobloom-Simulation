@@ -580,7 +580,7 @@ while counter < time_steps:
     water_contours_x, water_contours_y = zip(*water_contours_scatter)
     # create figure for each time step
     plt.figure()
-    plt.title(f"Barber Pond, time step = {counter}")
+    plt.title(f"Time step = {counter}")
     plt.scatter(water_contours_x, water_contours_y, color="blue", s=1.5)
     plt.scatter(ground_truths_x, ground_truths_y, color="green", s=15)
     plt.show()
