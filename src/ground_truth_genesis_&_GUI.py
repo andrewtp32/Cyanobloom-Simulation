@@ -284,6 +284,47 @@ class BloomGUI:
                                                           f"Water color upper boundary RBG: {upper_range_water}")
 
 
+def get_grid_of_points(array_of_points, res):
+    # create a shape out of the contour points
+    poly = Polygon(array_of_points)
+    # boundaries of the shape
+    lat_min, lon_min, lat_max, lon_max = poly.bounds
+
+    # build a grid of points given a spacing parameter (aka resolution)
+    grid = []  # array for the unfiltered points
+    filtered_grid = []  # array for th filtered points
+    for lat in np.arange(lat_min, lat_max, res):
+        for lon in np.arange(lon_min, lon_max, res):
+            # append the lattice point into the array
+            grid.append([round(lat, 4), round(lon, 4)])
+            # create a "Point" to test if the coordinate lies within the shape
+            grid_cell_Point_type = Point((round(lat, 4), round(lon, 4)))
+            # verify if "Point" fall within shape. if TRUE, append coordinate to the list
+            if poly.contains(grid_cell_Point_type) == 1:
+                filtered_grid.append([round(lat, 4), round(lon, 4)])
+
+    return filtered_grid
+
+
+def scale_and_invert_shape(array_of_points):
+    array_of_points = np.array(array_of_points)
+    # find the centroid of the shape
+    M = cv2.moments(array_of_points)
+    centroid_x = float(M['m10'] / M['m00'])
+    centroid_y = float(M['m01'] / M['m00'])
+    # translate shape to origin
+    poly_at_origin = array_of_points - [centroid_x, centroid_y]
+    # scale the shape (eventually this would be a scale based upon the coordinates given by the OSM data file)
+    scale = 1
+    ploy_scaled_at_origin = poly_at_origin * scale
+    # reflect shape over the x axis
+    poly_scaled_reflected_over_x_axis_at_origin = []
+    for point in ploy_scaled_at_origin:
+        poly_scaled_reflected_over_x_axis_at_origin.append([point[0], point[1] * -1])
+
+    return poly_scaled_reflected_over_x_axis_at_origin
+
+
 def read_OSM_xml(file_path):
     # Read the data inside the XML and put it under the variable name "data"
     with open(file_path, 'r') as f:
@@ -644,9 +685,13 @@ def create_data_arr_from_CSV(CSV_file):
     return data_arr
 
 
-def generate_drone_desired_positions_for_images_txt_file(x, y, width, height):
+def generate_drone_desired_positions_for_images_txt_file(array_of_points):
+    # create a shape out of the contour points
+    poly = Polygon(array_of_points)
+    # boundaries of the shape
+    lat_min, lon_min, lat_max, lon_max = poly.bounds
     # Create an mgrid for the values in the x and y directions with an interval of 20 units
-    X, Y = np.mgrid[x:x + width:50, y:y + height:50]
+    X, Y = np.mgrid[lon_min:lon_max:50, lat_min:lat_max:50]
 
     # np.ravel() will unravel all elements from a N-dimensional matrix into a 1D array zip() functions return a "zip"
     # object which is an iterator of tuples where the first item in each passed iterator is paired together,
@@ -662,7 +707,7 @@ def generate_drone_desired_positions_for_images_txt_file(x, y, width, height):
         np.savetxt(flight_path_file, [v], delimiter=',')
 
 
-def get_water_contours_and_drone_flight_path(lower_range, upper_range):
+def get_water_contours(lower_range, upper_range):
     # get image from file path
     img = cv2.imread(openstreetmap_file_path)
 
@@ -688,15 +733,6 @@ def get_water_contours_and_drone_flight_path(lower_range, upper_range):
         if cnt_area > largest_area:
             main_water_contour = cnt
 
-    # calculate perimeter of the contour
-    peri = cv2.arcLength(main_water_contour, True)
-    # make the shape of the contour simpler by approximation
-    approx = cv2.approxPolyDP(main_water_contour, 0.02 * peri, True)
-    # calculate a bounding box for the contour
-    x, y, width, height = cv2.boundingRect(approx)
-    # create drone flight plan
-    generate_drone_desired_positions_for_images_txt_file(x, y, width, height)
-
     # transforming data into a 2d array
     for point in main_water_contour:
         # print(f"'point' in 'cnt': {point}")
@@ -709,18 +745,40 @@ def get_water_contours_and_drone_flight_path(lower_range, upper_range):
 # get load path for screenshot of water, get the location of the lake, get save path for ground truths and flight path
 BloomGUI()
 
-# get contours for the water area, get the coordinates for the bounding box
-water_contours = get_water_contours_and_drone_flight_path(lower_range=lower_range_water,
-                                                          upper_range=upper_range_water)
-
 # read the OSM xml file
 coord_top_left, coord_top_right, coord_bottom_left, coord_bottom_right, coord_center = read_OSM_xml(OSM_data_file_path)
+
+# get contours for the water area, get the coordinates for the bounding box
+water_contour = get_water_contours(lower_range=lower_range_water,
+                                   upper_range=upper_range_water)
+
+# invert the contour points in the y direction
+water_contour_reformatted = scale_and_invert_shape(water_contour)
+
+# resolution will be 30 because we want each grid point to be 30 meters. apply 30 after we do the coordinate scaling
+resolution = 10
+# get a grid of points that fall within the contour shape
+lattice_points_array = get_grid_of_points(water_contour_reformatted, resolution)
+
+# create drone flight plan
+generate_drone_desired_positions_for_images_txt_file(water_contour_reformatted)
 
 # run API to get weather info for the lake location, convert data into workable arrays
 # get API query and convert to CSV
 CSV_text = create_CSV_from_API(coord_center, start_date, end_date)
 # create an (n x 5) array. the columns are: [date, time, irradiation, wind speed (m/s), wind direction (degrees)]
 data_array = create_data_arr_from_CSV(CSV_text)
+
+# plot results
+water_contour_reformatted_x, water_contour_reformatted_y = zip(*water_contour_reformatted)
+lattice_points_array_x, lattice_points_array_y = zip(*lattice_points_array)
+
+plt.figure()
+plt.title(f"water contour map with lattice")
+plt.scatter(water_contour_reformatted_x, water_contour_reformatted_y, color="blue", s=1.5)
+plt.scatter(lattice_points_array_x, lattice_points_array_y, color="black", s=1.5)
+
+plt.show()
 
 # initialize list for irradiances
 irradiance_list = []
