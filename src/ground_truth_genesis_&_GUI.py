@@ -41,8 +41,8 @@ import numpy as np
 import tkinter as tk
 import skfuzzy as fuzz
 import matplotlib.pyplot as plt
+from PIL import Image
 from statistics import mean
-from numpy import genfromtxt
 from bs4 import BeautifulSoup
 from tkinter import filedialog
 from skfuzzy import control as ctrl
@@ -78,7 +78,6 @@ class BloomGUI:
         self.root = tk.Tk()
         # set title and geometry
         self.root.title("Cyanobacterial Bloom Spawning and Evolution Simulation")
-        # self.root.geometry("500x300")
 
         # Set default font sizes
         title_font = ('Arial', 28)
@@ -90,15 +89,29 @@ class BloomGUI:
         self.var_end_date = tk.StringVar(value='2022-10-31')
 
         # create labels for each input
-        self.label_start_date = tk.Label(self.root, text="Start date (YYYY-MM-DD):", font=body_font, padx=5, pady=10,
-                                         anchor="e", justify="right")
-        self.label_end_date = tk.Label(self.root, text="End date (YYYY-MM-DD):", font=body_font, padx=5, pady=10,
-                                       anchor="e", justify="right")
+        self.label_start_date = tk.Label(self.root,
+                                         text="Start date (YYYY-MM-DD):",
+                                         font=body_font,
+                                         padx=5,
+                                         pady=10,
+                                         anchor="e",
+                                         justify="right")
+        self.label_end_date = tk.Label(self.root,
+                                       text="End date (YYYY-MM-DD):",
+                                       font=body_font,
+                                       padx=5,
+                                       pady=10,
+                                       anchor="e",
+                                       justify="right")
         self.label_instructions = tk.Label(self.root,
-                                           text="Please input your desired values into each entry box below. The \n"
-                                                "initialized values are merely recommendations. I recommend that \n"
-                                                "you fiddle around with these values until you see something that \n"
-                                                "you like.", font=heading_font, padx=5, pady=10,
+                                           text="Enter your desired values for start/end date and save/load file \n"
+                                                "paths. Look over the ReadMe.md file for instructions on gathering \n"
+                                                "OpenStreetMap screen captures and coordinate data. Further \n"
+                                                "instructions and documentation can be found on GitHub:\n"
+                                                "https://github.com/andrewtp32/Cyanobloom-Simulation",
+                                           font=heading_font,
+                                           padx=5,
+                                           pady=10,
                                            justify="left")
 
         # create entry widgets for each input
@@ -284,6 +297,40 @@ class BloomGUI:
                                                           f"Water color upper boundary RBG: {upper_range_water}")
 
 
+def calc_global_coordinate_distance(set_1, set_2):
+    R = 6371 * 10 ** 3
+    # phi, lambda in radians
+    phi_1 = set_1[0] * np.pi / 180
+    phi_2 = set_2[0] * np.pi / 180
+    delta_phi = (set_2[0] - set_1[0]) * np.pi / 180
+    delta_lambda = (set_2[1] - set_1[1]) * np.pi / 180
+    # constants for Haversine formula
+    a = np.sin(delta_phi / 2) * np.sin(delta_phi / 2) + np.cos(phi_1) * np.cos(phi_2) * np.sin(
+        delta_lambda / 2) * np.sin(delta_lambda / 2)
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    dist = R * c
+    print(dist)
+    # return the distance in meters
+    return dist
+
+
+def scale_contour(array_of_points, osm_opposite_coordinates):
+    array_of_points = np.array(array_of_points)
+    # create a shape out of the contour points
+    poly = Polygon(array_of_points)
+    # boundaries of the shape
+    lat_min, lon_min, lat_max, lon_max = poly.bounds
+    # calc distance between the two osm ~GLOBAL~ coordinates
+    osm_dist = calc_global_coordinate_distance(osm_opposite_coordinates[0], osm_opposite_coordinates[1])
+    # calc distance between the two contour ~CARTESIAN~ coordinates
+    contour_dist = np.sqrt(abs(lon_max - lon_min) ** 2 + abs(lat_max - lat_min) ** 2)
+    print(f"cnt dist between points: {contour_dist}")
+    # calc the scaling factor between the two distances
+    scale = osm_dist / contour_dist
+    # apply the scale to the contour
+    return array_of_points * scale
+
+
 def get_grid_of_points(array_of_points, res):
     # create a shape out of the contour points
     poly = Polygon(array_of_points)
@@ -306,23 +353,20 @@ def get_grid_of_points(array_of_points, res):
     return filtered_grid
 
 
-def scale_and_invert_shape(array_of_points):
+def invert_shape_and_move_to_origin(array_of_points):
     array_of_points = np.array(array_of_points)
     # find the centroid of the shape
     M = cv2.moments(array_of_points)
     centroid_x = float(M['m10'] / M['m00'])
     centroid_y = float(M['m01'] / M['m00'])
     # translate shape to origin
-    poly_at_origin = array_of_points - [centroid_x, centroid_y]
-    # scale the shape (eventually this would be a scale based upon the coordinates given by the OSM data file)
-    scale = 1
-    ploy_scaled_at_origin = poly_at_origin * scale
+    contour_at_origin = array_of_points - [centroid_x, centroid_y]
     # reflect shape over the x axis
-    poly_scaled_reflected_over_x_axis_at_origin = []
-    for point in ploy_scaled_at_origin:
-        poly_scaled_reflected_over_x_axis_at_origin.append([point[0], point[1] * -1])
+    poly_reflected_over_x_axis_at_origin = []
+    for point in contour_at_origin:
+        poly_reflected_over_x_axis_at_origin.append([point[0], point[1] * -1])
 
-    return poly_scaled_reflected_over_x_axis_at_origin
+    return poly_reflected_over_x_axis_at_origin
 
 
 def read_OSM_xml(file_path):
@@ -753,36 +797,29 @@ water_contour = get_water_contours(lower_range=lower_range_water,
                                    upper_range=upper_range_water)
 
 # invert the contour points in the y direction
-water_contour_reformatted = scale_and_invert_shape(water_contour)
+reformatted_contour_points = invert_shape_and_move_to_origin(water_contour)
+# scale the contours to the real-world water body size
+scaled_contour = scale_contour(reformatted_contour_points, [coord_bottom_left, coord_top_right])
 
 # resolution will be 30 because we want each grid point to be 30 meters. apply 30 after we do the coordinate scaling
-resolution = 10
+resolution = 30
 # get a grid of points that fall within the contour shape
-lattice_points_array = get_grid_of_points(water_contour_reformatted, resolution)
+lattice_points_array = get_grid_of_points(scaled_contour, resolution)
 
 # create drone flight plan
-generate_drone_desired_positions_for_images_txt_file(water_contour_reformatted)
+generate_drone_desired_positions_for_images_txt_file(scaled_contour)
 
 # run API to get weather info for the lake location, convert data into workable arrays
 # get API query and convert to CSV
+print(coord_center, start_date, end_date)
 CSV_text = create_CSV_from_API(coord_center, start_date, end_date)
 # create an (n x 5) array. the columns are: [date, time, irradiation, wind speed (m/s), wind direction (degrees)]
 data_array = create_data_arr_from_CSV(CSV_text)
 
-# plot results
-water_contour_reformatted_x, water_contour_reformatted_y = zip(*water_contour_reformatted)
-lattice_points_array_x, lattice_points_array_y = zip(*lattice_points_array)
-
-plt.figure()
-plt.title(f"water contour map with lattice")
-plt.scatter(water_contour_reformatted_x, water_contour_reformatted_y, color="blue", s=1.5)
-plt.scatter(lattice_points_array_x, lattice_points_array_y, color="black", s=1.5)
-
-plt.show()
-
 # initialize list for irradiances
 irradiance_list = []
 count = 0
+
 # For each time step:
 for data_vector in data_array:
     # create easy-to-read variable names for the elements in the data vector
@@ -798,12 +835,12 @@ for data_vector in data_array:
     # calculate fuzzy logic for blooms to spawn, reproduce, die, or do nothing based on temp data
     degree_bloom_appearance, degree_bloom_disappearance = fuzzy_logic(time, irradiance_over_last_6hrs, wind_speed)
 
-    # use fuzzy logic for the actual action of spawn, death, reproduce, exist
-    # use wind and vortex vectors to migrate the particles
+    # use wind and vortex vectors to migrate the particles ()
     # move particles back to within the water boundary if they move outside
     # save array of points to a csv file
 
-    if count % 168 == 0:
+    # every two weeks
+    if count % 336 == 0:
         print(f"                      Date: {date}\n"
               f"                      Time: {time}\n"
               f"   Prob of bloom appearing: {degree_bloom_appearance}\n"
