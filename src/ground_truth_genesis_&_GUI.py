@@ -363,6 +363,7 @@ def invert_shape_and_move_to_origin(array_of_points):
     contour_at_origin = array_of_points - [centroid_x, centroid_y]
     # reflect shape over the x axis
     poly_reflected_over_x_axis_at_origin = []
+    # mult the y values by -1
     for point in contour_at_origin:
         poly_reflected_over_x_axis_at_origin.append([point[0], point[1] * -1])
 
@@ -818,10 +819,12 @@ data_array = create_data_arr_from_CSV(CSV_text)
 
 # initialize list for irradiances
 irradiance_list = []
-count = 0
+# initialize arrays for bloom appearance and disappearance
+degree_bloom_appearance_array = []
+degree_bloom_disappearance_array = []
 
-# For each time step:
-for data_vector in data_array:
+# For each time step, calculate the degree of bloom formation and disappearance:
+for index, data_vector in enumerate(data_array):
     # create easy-to-read variable names for the elements in the data vector
     date = data_vector[0]
     time = float(data_vector[1])
@@ -834,16 +837,18 @@ for data_vector in data_array:
     irradiance_over_last_6hrs = sum(irradiance_list[-6:])
     # calculate fuzzy logic for blooms to spawn, reproduce, die, or do nothing based on temp data
     degree_bloom_appearance, degree_bloom_disappearance = fuzzy_logic(time, irradiance_over_last_6hrs, wind_speed)
-
-    # use wind and vortex vectors to migrate the particles ()
-    # move particles back to within the water boundary if they move outside
-    # save array of points to a csv file
-
+    # append values to their lists
+    degree_bloom_appearance_array.append(degree_bloom_appearance)
+    degree_bloom_disappearance_array.append(degree_bloom_disappearance)
+    '''
     # every two weeks
-    if count % 336 == 0:
+    if index % 336 == 0:
         print(f"                      Date: {date}\n"
               f"                      Time: {time}\n"
               f"   Prob of bloom appearing: {degree_bloom_appearance}\n"
-              f"Prob of bloom disappearing: {degree_bloom_disappearance}")
+              f"Prob of bloom disappearing: {degree_bloom_disappearance}\n")
+    '''
 
-    count += 1
+# use wind and vortex vectors to migrate the particles ()
+# move particles back to within the water boundary if they move outside
+# save array of points to a csv file
