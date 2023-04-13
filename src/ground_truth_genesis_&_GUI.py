@@ -840,6 +840,12 @@ for index, data_vector in enumerate(data_array):
     # append values to their lists
     degree_bloom_appearance_array.append(degree_bloom_appearance)
     degree_bloom_disappearance_array.append(degree_bloom_disappearance)
+
+    # visualize progress for the user
+    print(f"Date: {date} Time: {int(time)}\n",
+          "[" + ("/" * int(20 * index / len(data_array))) + ("." * int(20 * (1 - (index / len(data_array))))) + "]"
+          + f" {round(100 * index / len(data_array), 1)}% complete")
+    print()
     '''
     # every two weeks
     if index % 336 == 0:
