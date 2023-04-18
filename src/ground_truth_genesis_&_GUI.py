@@ -845,7 +845,6 @@ for index, data_vector in enumerate(data_array):
     print(f"Date: {date} Time: {int(time)}\n",
           "[" + ("/" * int(20 * index / len(data_array))) + ("." * int(20 * (1 - (index / len(data_array))))) + "]"
           + f" {round(100 * index / len(data_array), 1)}% complete")
-    print()
     '''
     # every two weeks
     if index % 336 == 0:
