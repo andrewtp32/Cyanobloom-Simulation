@@ -38,6 +38,7 @@ import urllib.request
 import urllib.error
 import sys
 import numpy as np
+import pandas as pd
 import tkinter as tk
 import skfuzzy as fuzz
 import matplotlib.pyplot as plt
@@ -49,6 +50,8 @@ from skfuzzy import control as ctrl
 from shapely.geometry import Point
 from shapely.geometry import Polygon
 
+# base directory for hotspot data
+base_directory = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/jess_sat_data"
 # initialize row vectors for the lower and upper HSV ranges.
 lower_range_water = []
 upper_range_water = []
@@ -85,8 +88,8 @@ class BloomGUI:
         body_font = ('Arial', 16)
 
         # initialize variables for Entries
-        self.var_start_date = tk.StringVar(value='2022-05-01')
-        self.var_end_date = tk.StringVar(value='2022-10-31')
+        self.var_start_date = tk.StringVar(value='2016-05-01')
+        self.var_end_date = tk.StringVar(value='2016-10-31')
 
         # create labels for each input
         self.label_start_date = tk.Label(self.root,
@@ -812,7 +815,6 @@ generate_drone_desired_positions_for_images_txt_file(scaled_contour)
 
 # run API to get weather info for the lake location, convert data into workable arrays
 # get API query and convert to CSV
-print(coord_center, start_date, end_date)
 CSV_text = create_CSV_from_API(coord_center, start_date, end_date)
 # create an (n x 5) array. the columns are: [date, time, irradiation, wind speed (m/s), wind direction (degrees)]
 data_array = create_data_arr_from_CSV(CSV_text)
@@ -841,19 +843,21 @@ for index, data_vector in enumerate(data_array):
     degree_bloom_appearance_array.append(degree_bloom_appearance)
     degree_bloom_disappearance_array.append(degree_bloom_disappearance)
 
+    if index % 444 < 5:
+        # extract the year and month values from the "date"
+        year = date[:4]
+        month = date[5:7]
+        day = date[8:]
+        # read the csv for the month corresponding to the weather data
+        month_data = pd.read_csv(f'{base_directory}/{year}/data_{year}_{int(month)}.csv')
+        # some constant
+        constant = 1
+        # find the product of the hotspot prob and the bloom appearance prob
+        month_data['Hotspot Prob'] = month_data['Hotspot Prob'] * degree_bloom_appearance * constant
+        # save to a csv file
+        month_data.to_csv(f'/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/resultant_fuzzy_and_jess_probabilities/{year}/resultant_prob_{year}-{month}-{day}_{int(time)}.csv')
+
     # visualize progress for the user
     print(f"Date: {date} Time: {int(time)}\n",
           "[" + ("/" * int(20 * index / len(data_array))) + ("." * int(20 * (1 - (index / len(data_array))))) + "]"
           + f" {round(100 * index / len(data_array), 1)}% complete")
-    '''
-    # every two weeks
-    if index % 336 == 0:
-        print(f"                      Date: {date}\n"
-              f"                      Time: {time}\n"
-              f"   Prob of bloom appearing: {degree_bloom_appearance}\n"
-              f"Prob of bloom disappearing: {degree_bloom_disappearance}\n")
-    '''
-
-# use wind and vortex vectors to migrate the particles ()
-# move particles back to within the water boundary if they move outside
-# save array of points to a csv file
