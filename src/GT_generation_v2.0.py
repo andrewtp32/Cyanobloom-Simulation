@@ -491,150 +491,20 @@ class BloomGUI:
                                                           f"Water color upper boundary RBG: {upper_range_water}")
 
 
+def generate_gaussian_distribution(mu, num_generated):
+    # Cov has a sigma of 15. The dividend is the number of meters in one coordinate length (this basically allows us to
+    # scale the distribution)
+    cov_matrix = np.array([[225 / 111139 ** 2, 0],
+                           [0, 225 / 111139 ** 2]])
+    # return a simple bi-variate normal distribution
+    return np.random.multivariate_normal(mu, cov_matrix, num_generated)
+
+
 def find_closest(array, point):
     # stack the two vectors in the shape of a (N x 2)
     array = np.asarray(array)
     # return the index of the closest array value to the coordinate
     return (np.mean(np.abs(array - point), axis=1)).argmin()
-
-
-def read_OSM_xml(file_path):
-    # Read the data inside the XML and put it under the variable name "data"
-    with open(file_path, 'r') as f:
-        OSM_data = f.read()
-
-    # Passing the stored data inside the beautifulsoup parser, storing the returned object
-    OSM_data = BeautifulSoup(OSM_data, "xml")
-
-    # Finding all instances of tag `unique`
-    bounds = OSM_data.find('bounds')
-    # convert to a string
-    bounds = str(bounds)
-
-    # constants for the naming conventions in the xml file
-    max_lat_name = 'maxlat="'
-    min_lat_name = 'minlat="'
-    max_lon_name = 'maxlon="'
-    min_lon_name = 'minlon="'
-
-    # slice the "bounds" string to find the location of each code
-    max_lat_name_index = bounds.find(max_lat_name)
-    max_lat_reduced = bounds[max_lat_name_index + len(max_lat_name):]
-    # print(f"max_lat_reduced = {max_lat_reduced}")
-    min_lat_name_index = bounds.find(min_lat_name)
-    min_lat_reduced = bounds[min_lat_name_index + len(min_lat_name):]
-    # print(f"min_lat_reduced = {min_lat_reduced}")
-    max_lon_name_index = bounds.find(max_lon_name)
-    max_lon_reduced = bounds[max_lon_name_index + len(max_lon_name):]
-    # print(f"max_lon_reduced = {max_lon_reduced}")
-    min_lon_index = bounds.find(min_lon_name)
-    min_lon_reduced = bounds[min_lon_index + len(min_lon_name):]
-    # print(f"min_lon_reduced = {min_lon_reduced}")
-
-    # slice the reduced strings to get the coordinate only
-    max_lat = float(max_lat_reduced[:max_lat_reduced.find('.') + 5])
-    min_lat = float(min_lat_reduced[:min_lat_reduced.find('.') + 5])
-    max_lon = float(max_lon_reduced[:max_lon_reduced.find('.') + 5])
-    min_lon = float(min_lon_reduced[:min_lon_reduced.find('.') + 5])
-
-    # find the coordinates of the corners of the bounding box
-    corner_top_left = [max_lat, min_lon]
-    corner_top_right = [max_lat, max_lon]
-    corner_bottom_left = [min_lat, min_lon]
-    corner_bottom_right = [min_lat, max_lon]
-    # find the center point of the bounding box. round to just 4 decimal points
-    center_coordinate = [round(mean([max_lat, min_lat]), 4), round(mean([max_lon, min_lon]), 4)]
-
-    return corner_top_left, corner_top_right, corner_bottom_left, corner_bottom_right, center_coordinate
-
-
-def get_water_contours(lower_range, upper_range):
-    # get image from file path
-    img = cv2.imread(openstreetmap_file_path)
-
-    # initialize a list of valid water area contour points
-    extracted_water_area_contour_points_array = []
-    # initialize variable to hold the largest water contour area
-    largest_area = 0
-    # initialize the array for the water contour with the largest area
-    main_water_contour = []
-
-    # Converting RGB to HSV:
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # Threshold the HSV image to get only colors in defined HSV range
-    mask = cv2.inRange(hsv, lower_range, upper_range)
-    # Circumscribe the perimeter of each shape
-    # use cv2.CHAIN_APPROX_SIMPLE to remove the redundant values
-    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-    # find the largest water contour in the list
-    for cnt in contours:
-        # calculate area of the given shape
-        cnt_area = cv2.contourArea(cnt)
-        if cnt_area > largest_area:
-            main_water_contour = cnt
-
-    # transforming data into a 2d array
-    for point in main_water_contour:
-        # print(f"'point' in 'cnt': {point}")
-        extracted_water_area_contour_points_array.append(point[0])
-
-    return extracted_water_area_contour_points_array
-
-
-def invert_shape_and_move_to_origin(array_of_points):
-    array_of_points = np.asarray(array_of_points)
-    # find the centroid of the shape
-    M = cv2.moments(array_of_points)
-    centroid_x = float(M['m10'] / M['m00'])
-    centroid_y = float(M['m01'] / M['m00'])
-    # translate shape to origin
-    contour_at_origin = array_of_points - [centroid_x, centroid_y]
-    # reflect shape over the x axis
-    poly_reflected_over_x_axis_at_origin = []
-    # mult the y values by -1
-    for point in contour_at_origin:
-        poly_reflected_over_x_axis_at_origin.append([point[0], point[1] * -1])
-
-    return poly_reflected_over_x_axis_at_origin
-
-
-def scale_contour_and_return_to_coordinate(array_of_points, center_pnt, osm_opposite_coordinates):
-    center_pnt = np.asarray(center_pnt)
-    print(center_pnt)
-    array_of_points = np.asarray(array_of_points)
-    # create a shape out of the contour points
-    poly = Polygon(array_of_points)
-    # boundaries of the shape
-    lat_min, lon_min, lat_max, lon_max = poly.bounds
-    # calc distance between the two osm ~GLOBAL~ coordinates
-    osm_dist = calc_global_coordinate_distance(osm_opposite_coordinates[0], osm_opposite_coordinates[1])
-    # calc distance between the two contour ~CARTESIAN~ coordinates
-    contour_dist = np.sqrt(abs(lon_max - lon_min) ** 2 + abs(lat_max - lat_min) ** 2)
-    # print(f"cnt dist between points: {contour_dist}")
-    # calc the scaling factor between the two distances
-    scale = contour_dist / osm_dist
-    # apply the scale to the contour and the center point
-    scaled_contour = array_of_points * scale
-    # move the contours to the true coordinate locations
-    return scaled_contour + center_pnt
-
-
-def calc_global_coordinate_distance(set_1, set_2):
-    R = 6371 * 10 ** 3
-    # phi, lambda in radians
-    phi_1 = set_1[0] * np.pi / 180
-    phi_2 = set_2[0] * np.pi / 180
-    delta_phi = (set_2[0] - set_1[0]) * np.pi / 180
-    delta_lambda = (set_2[1] - set_1[1]) * np.pi / 180
-    # constants for Haversine formula
-    a = np.sin(delta_phi / 2) * np.sin(delta_phi / 2) + np.cos(phi_1) * np.cos(phi_2) * np.sin(
-        delta_lambda / 2) * np.sin(delta_lambda / 2)
-    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
-    dist = R * c
-    # print(dist)
-    # return the distance in meters
-    return dist
 
 
 def generate_drone_desired_positions_for_images_txt_file(array_of_points):
@@ -749,11 +619,15 @@ ax.set_aspect('equal')
 
 # For each time step, calculate the degree of bloom formation and disappearance:
 for index, data_vector in enumerate(weather_data_array):
-    """---------- Keep count of birth and death rate ----------"""
-    num_births = 0
-    num_deaths = 0
 
-    """---------- Make the weather data workable ----------"""
+    # initialize deletion array
+    deletion_index_array = np.array([])
+
+    """---------- Keep count of birth and reproduction rate ----------"""
+    num_births = 0
+    num_reproduced = 0
+
+    """---------- Make the weather data more workable ----------"""
     # create easy-to-read variable names for the elements in the data vector
     date = data_vector[0]
     time_ = int(data_vector[1])
@@ -811,13 +685,13 @@ for index, data_vector in enumerate(weather_data_array):
     """---------- Particle spawn ----------"""
     # particle spawn
     # if deg bloom dis is appropriate and jess's data is also appropriate, then spawn particle
-    spawning_param = 50
+    spawning_param = 75
     if degree_bloom_appearance > spawning_param:
         # append the HOT coordinates if the degree of formation is high enough
         particle_array = np.append(particle_array, month_hot, axis=0)
         num_births += len(month_hot)
 
-    """---------- Kill or Reproduce Particles ----------"""
+    """---------- Rearrange, Reproduce, Kill particles ----------"""
     if len(particle_array) > 1:
         # loop through the array of particles
         for i, particle in enumerate(particle_array):
@@ -826,25 +700,36 @@ for index, data_vector in enumerate(weather_data_array):
             # pull the row in Jess's data with that index
             hotspot_data_at_coordinate = month_data_arr[closest_coordinate_index]
 
+            # rearrange particle
             # check if the particle id out of the range of the water body
             if np.mean(abs(particle - [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]])) > 0.0001:
                 # if outside of body, assign the point's location back to the edge of the body
                 particle_array[i] = [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]]
-            print(len(particle_array))
-            # particle death
-            # if deg bloom dis is appropriate and jess's data is also appropriate, then kill particle
-            death_param = 50
-            if (degree_bloom_disappearance > death_param) & (hotspot_data_at_coordinate[5] == 0):
-                # append the HOT coordinates if the degree of formation is high enough
-                np.delete(particle_array, i)
-                num_deaths += 1
-
-            # particle reproduction
+            """
+            # reproduce particles
             # if deg bloom dis is appropriate and jess's data is also appropriate,
+            repro_param = 75
+            if (degree_bloom_appearance > repro_param) & (hotspot_data_at_coordinate[5] == 3):
+                # append the reproduced particles
+                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                num_reproduced += 1
+            """
+            # if deg bloom dis is appropriate and jess's data is also appropriate, then kill particle
+            death_param = 30
+            if (degree_bloom_disappearance > death_param) & (hotspot_data_at_coordinate[5] <= 1):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
 
+    """---------- Kill off the categorized particles ----------"""
+    if len(deletion_index_array) > 1:
+        # remove the particles from the array
+        particle_array = np.delete(particle_array, deletion_index_array, 0)
+
+    print(f"Date: {month}/{day}/{year}, {time_}")
     print(f"Total particles: {len(particle_array)}")
-    print(f"Num births: {num_births}")
-    print(f"Num deaths: {num_deaths}\n")
+    print(f"Num births in latest step: {num_births}")
+    print(f"Num reproduced in latest step: {num_reproduced}")
+    print(f"Num deaths in latest step: {len(deletion_index_array)}\n")
 
     ground_truths_x, ground_truths_y = zip(*particle_array)
     month_coordinates_arr_x, month_coordinates_arr_y = zip(*month_coordinates_arr)

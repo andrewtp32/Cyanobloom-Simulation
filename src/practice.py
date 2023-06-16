@@ -19,6 +19,15 @@ def find_closest(arr_a, arr_b, point):
     return (np.mean(np.abs(array - point), axis=1)).argmin()
 
 
+def generate_gaussian_distribution(mu, num_generated):
+    # Cov has a sigma of 15. The dividend is the number of meters in one coordinate length (this basically allows us to
+    # scale the distribution)
+    cov_matrix = np.array([[225 / 111139 ** 2, 0],
+                           [0, 225 / 111139 ** 2]])
+    # return a simple bi-variate normal distribution
+    return np.random.multivariate_normal(mu, cov_matrix, num_generated)
+
+
 """
 array_1 = np.asarray(np.random.random(10))
 array_2 = np.asarray(np.random.random(10))
@@ -157,7 +166,29 @@ print(coordinate)
 
 print("\n--- %s seconds ---" % (time.time() - start_time))
 """
-
-array_1 = np.asarray(np.random.random(10))
-array_2 = np.asarray(np.random.random(10))
+"""
+array_1 = np.asarray(np.random.random(3))
+array_2 = np.asarray(np.random.random(3))
 arr = np.column_stack((array_1, array_2))
+print(arr)
+
+arr = np.delete(arr, 2, 0)
+print(arr)
+"""
+"""
+arr = generate_gaussian_distribution(coordinate, 5)
+"""
+
+array_1 = np.asarray(np.random.random(5))
+array_2 = np.asarray(np.random.random(5))
+arr = np.column_stack((array_1, array_2))
+print(arr)
+b = np.arange(3)
+print(b)
+c = 3
+b = np.append(b, c)
+print(b)
+new_arr = np.delete(arr, b, 0)
+print(new_arr)
+
+
