@@ -191,7 +191,7 @@ print(b)
 new_arr = np.delete(arr, b, 0)
 print(new_arr)
 """
-
+"""
 array_1 = np.asarray(np.random.random(5))
 array_2 = np.asarray(np.random.random(5))
 arr = np.column_stack((array_1, array_2))
@@ -209,4 +209,5 @@ x = np.add(x, a)
 arr = np.column_stack((x, y))
 
 print(arr)
-
+"""
+print(np.random.rand())

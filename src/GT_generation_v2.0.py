@@ -697,6 +697,9 @@ for index, data_vector in enumerate(weather_data_array):
     if len(particle_array) > 1:
         # loop through the array of particles
         for i, particle in enumerate(particle_array):
+            # draw a random number
+            rand = np.random.rand()
+
             # find the coordinate that most closely correlates to the particle in question
             closest_coordinate_index = find_closest(month_coordinates_arr, particle)
             # pull the row in Jess's data with that index
@@ -710,12 +713,12 @@ for index, data_vector in enumerate(weather_data_array):
 
             # reproduce particles
             # if jess data is "not significant" and the deg bloom appearance is very high, then reproduce
-            if (hotspot_data_at_coordinate[5] == 2) and (degree_bloom_appearance >= 75):
+            if (hotspot_data_at_coordinate[5] == 2) and (degree_bloom_appearance >= 75) and (rand <= 0.1):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
             # if jess data is "hot" and the deg bloom appearance is high or very high, then reproduce
-            if (hotspot_data_at_coordinate[5] == 3) and (degree_bloom_appearance >= 45):
+            if (hotspot_data_at_coordinate[5] == 3) and (degree_bloom_appearance >= 45) and (rand <= 0.1):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
