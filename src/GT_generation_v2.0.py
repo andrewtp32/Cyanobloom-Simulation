@@ -5,8 +5,8 @@ import sys
 import time
 import codecs
 import colorsys
-import urllib.request
 import urllib.error
+import urllib.request
 import numpy as np
 import pandas as pd
 import tkinter as tk
@@ -679,8 +679,10 @@ for index, data_vector in enumerate(weather_data_array):
     wnd_damp_param = 0.00005
     if len(particle_array) > 1:
         arr_x, arr_y = zip(*particle_array)
-        particle_array = np.column_stack((arr_x + (wnd_damp_param * wind_speed * np.cos(wind_direction * np.pi / 180)),
-                                          arr_y + (wnd_damp_param * wind_speed * np.sin(wind_direction * np.pi / 180))))
+        particle_array = np.column_stack((arr_x + wnd_damp_param * (np.add(-0.5, np.random.rand(len(arr_x))) +
+                                                                    wind_speed * np.cos(wind_direction * np.pi / 180)),
+                                          arr_y + wnd_damp_param * (np.add(-0.5, np.random.rand(len(arr_y))) +
+                                                                    wind_speed * np.sin(wind_direction * np.pi / 180))))
 
     """---------- Particle spawn ----------"""
     # particle spawn
@@ -705,18 +707,30 @@ for index, data_vector in enumerate(weather_data_array):
             if np.mean(abs(particle - [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]])) > 0.0001:
                 # if outside of body, assign the point's location back to the edge of the body
                 particle_array[i] = [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]]
-            """
+
             # reproduce particles
-            # if deg bloom dis is appropriate and jess's data is also appropriate,
-            repro_param = 75
-            if (degree_bloom_appearance > repro_param) & (hotspot_data_at_coordinate[5] == 3):
+            # if jess data is "not significant" and the deg bloom appearance is very high, then reproduce
+            if (hotspot_data_at_coordinate[5] == 2) and (degree_bloom_appearance >= 75):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
-            """
-            # if deg bloom dis is appropriate and jess's data is also appropriate, then kill particle
-            death_param = 30
-            if (degree_bloom_disappearance > death_param) & (hotspot_data_at_coordinate[5] <= 1):
+            # if jess data is "hot" and the deg bloom appearance is high or very high, then reproduce
+            if (hotspot_data_at_coordinate[5] == 3) and (degree_bloom_appearance >= 45):
+                # append the reproduced particles
+                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                num_reproduced += 1
+
+            # kill particles
+            # if jess data is "not significant" and the deg bloom disappearance is very high, then kill
+            if (hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 75):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
+            # if jess data is "cold" and the deg bloom disappearance is high or very high, then kill
+            if (hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 45):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
+            # if jess data is "very cold" and the deg bloom disappearance is moderate, high, or very high, then kill
+            if (hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 20):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
 

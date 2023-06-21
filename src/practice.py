@@ -178,7 +178,7 @@ print(arr)
 """
 arr = generate_gaussian_distribution(coordinate, 5)
 """
-
+"""
 array_1 = np.asarray(np.random.random(5))
 array_2 = np.asarray(np.random.random(5))
 arr = np.column_stack((array_1, array_2))
@@ -190,5 +190,23 @@ b = np.append(b, c)
 print(b)
 new_arr = np.delete(arr, b, 0)
 print(new_arr)
+"""
 
+array_1 = np.asarray(np.random.random(5))
+array_2 = np.asarray(np.random.random(5))
+arr = np.column_stack((array_1, array_2))
+
+x, y = zip(*arr)
+x = np.asarray(x)
+y = np.asarray(y)
+
+a = np.add(-0.5, np.random.rand(len(array_1)))
+
+print(x)
+print(a)
+
+x = np.add(x, a)
+arr = np.column_stack((x, y))
+
+print(arr)
 
