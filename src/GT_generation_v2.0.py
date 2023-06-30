@@ -611,6 +611,7 @@ f = FuzzyBloomModel()
 
 # initialize lists and arrays
 irradiance_list = []
+deg_bloom_app_log = []
 particle_array = np.array([[0, 0]])
 
 # create plot
@@ -644,7 +645,7 @@ for index, data_vector in enumerate(weather_data_array):
 
     # append irradiance to the list
     irradiance_list.append(irradiance)
-    # delete the unnecessary items in the irradiance list so that we only hold the last 6 hurs
+    # delete the unnecessary items in the irradiance list so that we only hold the last 6 hours
     if len(irradiance_list) > 6:
         irradiance_list = irradiance_list[-6:]
     # calculate the irradiance sum over the last 6 hours
@@ -655,9 +656,11 @@ for index, data_vector in enumerate(weather_data_array):
     stability_first_leg, buoyancy_first_leg = f.first_leg(wind_speed, irradiance_over_last_6hrs, time_)
     degree_bloom_appearance, degree_bloom_disappearance = f.second_leg(stability_first_leg, buoyancy_first_leg)
 
-    # print(f"{index}\n"
-    #       f"Deg app: {degree_bloom_appearance}\n"
-    #       f"Deg dis: {degree_bloom_disappearance}")
+    # log the 6 most previous time steps of fuzzy logic outputs
+    deg_bloom_app_log.append(degree_bloom_appearance)
+    if len(deg_bloom_app_log) > 6:
+        deg_bloom_app_log = deg_bloom_app_log[-6:]
+    deg_bloom_app_last_6hrs = sum(deg_bloom_app_log)
 
     """---------- Format Jess' data ----------"""
     # locate relevant satellite data
@@ -678,7 +681,7 @@ for index, data_vector in enumerate(weather_data_array):
 
     """---------- Migrate the particles based on wind speed and direction ----------"""
     # particle movement (multiply by some slope and angle, i.e., the wind speed and direction from data)
-    wnd_damp_param = 0.00003
+    wnd_damp_param = 0.00002
     if len(particle_array) > 1:
         arr_x, arr_y = zip(*particle_array)
         particle_array = np.column_stack((arr_x + wnd_damp_param * (np.add(-0.5, np.random.rand(len(arr_x))) +
@@ -689,7 +692,7 @@ for index, data_vector in enumerate(weather_data_array):
     """---------- Particle spawn ----------"""
     # particle spawn
     # if deg bloom dis is appropriate and jess's data is also appropriate, then spawn particle
-    if (degree_bloom_appearance > 75) and (rand_num > 0.5):
+    if deg_bloom_app_last_6hrs > 420:
         # append the HOT coordinates if the degree of formation is high enough
         particle_array = np.append(particle_array, month_hot, axis=0)
         num_births += len(month_hot)
@@ -719,8 +722,17 @@ for index, data_vector in enumerate(weather_data_array):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
+            # if jess data is "not significant" and the deg bloom appearance is very high, then reproduce
+            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 75) and (rand <= 0.01):
+                # append the reproduced particles
+                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                num_reproduced += 1
 
             # kill particles
+            # if jess data is "not significant" and the deg bloom disappearance very high, then kill
+            if (hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 75):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "cold" and the deg bloom disappearance is high or very high, then kill
             if (hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 45):
                 # append the index to an array
@@ -749,7 +761,7 @@ for index, data_vector in enumerate(weather_data_array):
     ax.set_title(f"{month}/{day}/{year}, {time_}")
     ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
     ax.scatter(ground_truths_x[1:], ground_truths_y[1:], color="green", s=0.5)
-    plt.pause(0.5)
+    plt.pause(0.25)
     plt.cla()
 
 # print the total time to complete program
