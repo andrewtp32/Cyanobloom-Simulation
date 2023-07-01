@@ -11,13 +11,8 @@ import numpy as np
 import pandas as pd
 import tkinter as tk
 import skfuzzy as fuzz
-import matplotlib.pyplot as plt
-from PIL import Image
-from statistics import mean
-from bs4 import BeautifulSoup
 from tkinter import filedialog
 from skfuzzy import control as ctrl
-from shapely.geometry import Point
 from shapely.geometry import Polygon
 
 # record the start time
@@ -491,6 +486,13 @@ class BloomGUI:
                                                           f"Water color upper boundary RBG: {upper_range_water}")
 
 
+def convert_array_to_cartesian(global_coordinate_arr, center_point):
+    # move to origin
+    arr_at_origin = global_coordinate_arr - center_point
+    # scale to meters and return
+    return arr_at_origin * 111139
+
+
 def place_into_csv_file(array_of_points, save_path, file_name):
     # place values into a cvs file
     gt_file = open(f"{save_path}/{file_name}", "w")
@@ -611,8 +613,13 @@ CSV_text = create_CSV_from_API(sabattus_coordinate, start_date, end_date)
 # create an (n x 5) array. the columns are: [date, time, irradiation, wind speed (m/s), wind direction (degrees)]
 weather_data_array = create_data_arr_from_CSV(CSV_text)
 
-# read the csv for the month corresponding to the weather data
+# read the csv of Jess's satelite data
 full_df = pd.read_csv(f'{base_dir}/jess_sat_data/hotspots_monthyear.csv')
+# find the max and min values for each column
+max_values = full_df.max()
+min_values = full_df.min()
+# center of mass
+center_of_mass = [np.mean([max_values[0], min_values[0]]), np.mean([max_values[1], min_values[1]])]
 
 # create instance of the fuzzy model class
 f = FuzzyBloomModel()
@@ -710,8 +717,8 @@ for index, data_vector in enumerate(weather_data_array):
         for mh in month_hot:
             # draw a random number
             rand_mh = np.random.rand()
-            # this is so that only 10 percent of the number of "hotspot" particles spawn
-            if rand_mh <= 0.01:
+            # this is so that only 5 percent of the number of "hotspot" particles spawn
+            if rand_mh <= 0.05:
                 # append the HOT coordinates if the degree of formation is high enough
                 particle_array = np.append(particle_array, [mh], axis=0)
                 num_births += 1
@@ -758,6 +765,10 @@ for index, data_vector in enumerate(weather_data_array):
                 num_reproduced += 1
 
             # kill particles
+            # if there are a lot of bad hours in a row, kill 1% of particles
+            if (deg_bloom_dis_last_6hrs > 400) and (rand <= 0.02):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
             if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.01):
                 # append the index to an array
@@ -792,18 +803,10 @@ for index, data_vector in enumerate(weather_data_array):
     print(f"Num reproduced in latest step: {num_reproduced}")
     print(f"Num deaths in latest step: {len(deletion_index_array)}\n")
 
+    # move the center of mass to the origin (and scale so that 1m = 1 gazebo world unit)
     # place ground truth coordinates into txt file
-    place_into_csv_file(particle_array, save_folder_path,
+    place_into_csv_file(convert_array_to_cartesian(particle_array, center_of_mass), save_folder_path,
                         f"{year}-{('%02.f' % month)}-{('%02.f' % day)}-{('%04.f' % time_)}")
-
-    # ground_truths_x, ground_truths_y = zip(*particle_array)
-    # month_coordinates_arr_x, month_coordinates_arr_y = zip(*month_coordinates_arr)
-    # # create figure for each time step
-    # ax.set_title(f"{month}/{day}/{year}, {time_}")
-    # ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    # ax.scatter(ground_truths_x[1:], ground_truths_y[1:], color="green", s=0.5)
-    # plt.pause(0.25)
-    # plt.cla()
 
 # print the total time to complete program
 print("\n--- %s seconds ---" % (time.time() - start_time))

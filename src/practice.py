@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import time
+import os
 from shapely.geometry import Point
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
@@ -210,4 +211,20 @@ arr = np.column_stack((x, y))
 
 print(arr)
 """
+"""
 print(np.random.rand())
+"""
+
+# find the center point of jess's data
+base_dir = (os.getcwd())[:-4]
+# read the csv for the month corresponding to the weather data
+full_df = pd.read_csv(f'{base_dir}/jess_sat_data/hotspots_monthyear.csv')
+# locate relevant satellite data
+month_df = full_df.loc[(full_df['Year'] == 2016) & (full_df['Month'] == 5)]
+# find the max and min values for each column
+max_values = month_df.max()
+min_values = month_df.min()
+print(max_values[0], max_values[1])
+print(min_values[0], min_values[1])
+center_of_mass = [np.mean([max_values[0], min_values[0]]), np.mean([max_values[1], min_values[1]])]
+print(center_of_mass)
