@@ -42,6 +42,6 @@ for index, filename in enumerate(filename_list):
     # create figure for each time step
     ax.set_title(f"{filename} - {len(ground_truths_x)}")
     ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    ax.scatter(ground_truths_x, ground_truths_y, color="green", s=0.5)
-    plt.pause(0.1)
+    ax.scatter(ground_truths_x, ground_truths_y, color="green", s=1)
+    plt.pause(0.05)
     plt.cla()
