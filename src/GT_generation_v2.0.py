@@ -24,14 +24,14 @@ from shapely.geometry import Polygon
 start_time = time.time()
 
 # base directory for hotspot data
-base_directory = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/jess_sat_data"
+base_dir = (os.getcwd())[:-4]
 # initialize row vectors for the lower and upper HSV ranges.
 lower_range_water = np.array([91, 57, 211])
 upper_range_water = np.array([100, 63, 234])
 # initialize strings for directory and file path
 OSM_data_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/openstreetmap_data_files/SabattusPond.osm"
 openstreetmap_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/openstreetmap_screenshots/SabattusPond.png"
-save_folder_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/ground_truths/SabattusPond/2016/ground_truth_coordinates"
+save_folder_path = f"{base_dir}/ground_truths/SabattusPond/2016"
 flight_path_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/drone_picture_coordinates/SabattusPond"
 # Optional start and end dates
 # If nothing is specified, the forecast is retrieved.
@@ -491,6 +491,14 @@ class BloomGUI:
                                                           f"Water color upper boundary RBG: {upper_range_water}")
 
 
+def place_into_csv_file(array_of_points, save_path, file_name):
+    # place values into a cvs file
+    gt_file = open(f"{save_path}/{file_name}", "w")
+    # save values to a file
+    for v in array_of_points:
+        np.savetxt(gt_file, [v], delimiter=',')
+
+
 def generate_gaussian_distribution(mu, num_generated):
     # Cov has a sigma of 15. The dividend is the number of meters in one coordinate length (this basically allows us to
     # scale the distribution)
@@ -604,7 +612,7 @@ CSV_text = create_CSV_from_API(sabattus_coordinate, start_date, end_date)
 weather_data_array = create_data_arr_from_CSV(CSV_text)
 
 # read the csv for the month corresponding to the weather data
-full_df = pd.read_csv(f'{base_directory}/hotspots_monthyear.csv')
+full_df = pd.read_csv(f'{base_dir}/jess_sat_data/hotspots_monthyear.csv')
 
 # create instance of the fuzzy model class
 f = FuzzyBloomModel()
@@ -612,11 +620,12 @@ f = FuzzyBloomModel()
 # initialize lists and arrays
 irradiance_list = []
 deg_bloom_app_log = []
+deg_bloom_dis_log = []
 particle_array = np.array([[0, 0]])
 
 # create plot
-fig, ax = plt.subplots(figsize=[6, 8])
-ax.set_aspect('equal')
+# fig, ax = plt.subplots(figsize=[6, 8])
+# ax.set_aspect('equal')
 
 # For each time step, calculate the degree of bloom formation and disappearance:
 for index, data_vector in enumerate(weather_data_array):
@@ -662,6 +671,11 @@ for index, data_vector in enumerate(weather_data_array):
         deg_bloom_app_log = deg_bloom_app_log[-6:]
     deg_bloom_app_last_6hrs = sum(deg_bloom_app_log)
 
+    deg_bloom_dis_log.append(degree_bloom_disappearance)
+    if len(deg_bloom_dis_log) > 6:
+        deg_bloom_dis_log = deg_bloom_dis_log[-6:]
+    deg_bloom_dis_last_6hrs = sum(deg_bloom_dis_log)
+
     """---------- Format Jess' data ----------"""
     # locate relevant satellite data
     month_df = full_df.loc[(full_df['Year'] == year) & (full_df['Month'] == month)]
@@ -693,9 +707,14 @@ for index, data_vector in enumerate(weather_data_array):
     # particle spawn
     # if deg bloom dis is appropriate and jess's data is also appropriate, then spawn particle
     if deg_bloom_app_last_6hrs > 420:
-        # append the HOT coordinates if the degree of formation is high enough
-        particle_array = np.append(particle_array, month_hot, axis=0)
-        num_births += len(month_hot)
+        for mh in month_hot:
+            # draw a random number
+            rand_mh = np.random.rand()
+            # this is so that only 10 percent of the number of "hotspot" particles spawn
+            if rand_mh <= 0.01:
+                # append the HOT coordinates if the degree of formation is high enough
+                particle_array = np.append(particle_array, [mh], axis=0)
+                num_births += 1
 
     """---------- Rearrange, Reproduce, Kill particles ----------"""
     if len(particle_array) > 1:
@@ -717,28 +736,46 @@ for index, data_vector in enumerate(weather_data_array):
                 particle_array[i] = [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]]
 
             # reproduce particles
-            # if jess data is "hot" and the deg bloom appearance is high or very high, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 45) and (rand <= 0.01):
+            # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
+            if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
-            # if jess data is "not significant" and the deg bloom appearance is very high, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 75) and (rand <= 0.01):
+            # if jess data is "not significant" and the deg bloom appearance is moderate or more, then reproduce
+            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 20) and (rand <= 0.005):
+                # append the reproduced particles
+                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                num_reproduced += 1
+            # if jess data is "cold" and the deg bloom appearance is high or more, then reproduce
+            if (hotspot_data_at_coordinate[5] >= 1) and (degree_bloom_appearance >= 45) and (rand <= 0.005):
+                # append the reproduced particles
+                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                num_reproduced += 1
+            # if jess data is "very cold" and the deg bloom appearance is very high or more, then reproduce
+            if (hotspot_data_at_coordinate[5] >= 0) and (degree_bloom_appearance >= 75) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
 
             # kill particles
-            # if jess data is "not significant" and the deg bloom disappearance very high, then kill
-            if (hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 75):
+            # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
+            if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
-            # if jess data is "cold" and the deg bloom disappearance is high or very high, then kill
-            if (hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 45):
+            # if jess data is "hot" and the deg bloom disappearance is high or more, then kill
+            if ((hotspot_data_at_coordinate[5] == 3) and (degree_bloom_disappearance >= 45)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
-            # if jess data is "very cold" and the deg bloom disappearance is moderate, high, or very high, then kill
-            if (hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 20):
+            # if jess data is "not significant" and the deg bloom disappearance is moderate or more, then kill
+            if ((hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 20)) and (rand <= 0.01):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
+            # if jess data is "cold" and the deg bloom disappearance is low or more, then kill
+            if ((hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 9)) and (rand <= 0.01):
+                # append the index to an array
+                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
+            # if jess data is "very cold" and the deg bloom disappearance is very low or more, then kill
+            if ((hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 1)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
 
@@ -755,14 +792,18 @@ for index, data_vector in enumerate(weather_data_array):
     print(f"Num reproduced in latest step: {num_reproduced}")
     print(f"Num deaths in latest step: {len(deletion_index_array)}\n")
 
-    ground_truths_x, ground_truths_y = zip(*particle_array)
-    month_coordinates_arr_x, month_coordinates_arr_y = zip(*month_coordinates_arr)
-    # create figure for each time step
-    ax.set_title(f"{month}/{day}/{year}, {time_}")
-    ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    ax.scatter(ground_truths_x[1:], ground_truths_y[1:], color="green", s=0.5)
-    plt.pause(0.25)
-    plt.cla()
+    # place ground truth coordinates into txt file
+    place_into_csv_file(particle_array, save_folder_path,
+                        f"{year}-{('%02.f' % month)}-{('%02.f' % day)}-{('%04.f' % time_)}")
+
+    # ground_truths_x, ground_truths_y = zip(*particle_array)
+    # month_coordinates_arr_x, month_coordinates_arr_y = zip(*month_coordinates_arr)
+    # # create figure for each time step
+    # ax.set_title(f"{month}/{day}/{year}, {time_}")
+    # ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
+    # ax.scatter(ground_truths_x[1:], ground_truths_y[1:], color="green", s=0.5)
+    # plt.pause(0.25)
+    # plt.cla()
 
 # print the total time to complete program
 print("\n--- %s seconds ---" % (time.time() - start_time))
