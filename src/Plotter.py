@@ -33,10 +33,29 @@ month_coordinates_arr = np.array(month_df_coordinates)
 # reformat the coordinates
 month_coordinates_arr = convert_array_to_cartesian(month_coordinates_arr, [-70.09755158499999, 44.145137175])
 
+""" --------------- Line graphs of the particle population at each step --------------- """
+# create a plot
+fig1, ax1 = plt.subplots()
+
+# initialize the lists
+pop_amount_arr = []
+
+# read the txt files
+for filename in filename_list:
+    # load the text file
+    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',')
+    # record the amount of particles at this time step
+    pop_amount_arr.append(len(ground_truth_scatter))
+
+# plot
+ax1.plot(pop_amount_arr)
+# configure the x-labels
+ax1.set_xticks([0, 744, 1464, 2208, 2952, 3672], ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
+
 """ --------------- Plot of all the GTs on the lake --------------- """
 # create plot
-fig, ax = plt.subplots(figsize=[4, 6])
-ax.set_aspect('equal')
+fig0, ax0 = plt.subplots()
+ax0.set_aspect('equal')
 
 # read the txt files
 for index, filename in enumerate(filename_list[2000:]):
@@ -50,8 +69,8 @@ for index, filename in enumerate(filename_list[2000:]):
     # unzip GT
     month_coordinates_arr_x, month_coordinates_arr_y = zip(*month_coordinates_arr)
     # create figure for each time step
-    ax.set_title(f"{filename} - {len(ground_truths_x)}")
-    ax.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    ax.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
+    ax0.set_title(f"{filename} - {len(ground_truths_x)}")
+    ax0.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
+    ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
     plt.pause(0.01)
     plt.cla()
