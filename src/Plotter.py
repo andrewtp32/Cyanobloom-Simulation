@@ -52,10 +52,11 @@ ax1.plot(pop_amount_arr)
 # configure the x-labels and grid
 month_ticks = [0, 744, 1464, 2208, 2952, 3672]
 minor_ticks = [0, 186, 372, 558, 744,
-               930, 1116, 1302, 1464, 1674,
-               1860, 2046, 2208, 2418, 2604,
-               2790, 2952, 3162, 3348, 3534,
-               3672, 3906, 4062, 4278]
+               924, 1104, 1284, 1464,
+               1650, 1836, 2022, 2208,
+               2394, 2580, 2766, 2952,
+               3132, 3312, 3492, 3672,
+               3858, 4044, 4230, 4414]
 ax1.set_xticks(month_ticks, ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
 ax1.set_xticks(minor_ticks, minor=True)
 

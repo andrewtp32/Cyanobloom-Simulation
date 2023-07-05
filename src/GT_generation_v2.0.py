@@ -744,22 +744,22 @@ for index, data_vector in enumerate(weather_data_array):
 
             # reproduce particles
             # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.01):
+            if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
             # if jess data is "not significant" and the deg bloom appearance is moderate or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 20) and (rand <= 0.01):
+            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 20) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
             # if jess data is "cold" and the deg bloom appearance is high or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 1) and (degree_bloom_appearance >= 45) and (rand <= 0.01):
+            if (hotspot_data_at_coordinate[5] >= 1) and (degree_bloom_appearance >= 45) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
             # if jess data is "very cold" and the deg bloom appearance is very high or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 0) and (degree_bloom_appearance >= 75) and (rand <= 0.01):
+            if (hotspot_data_at_coordinate[5] >= 0) and (degree_bloom_appearance >= 75) and (rand <= 0.005):
                 # append the reproduced particles
                 particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                 num_reproduced += 1
