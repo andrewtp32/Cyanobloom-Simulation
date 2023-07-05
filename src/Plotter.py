@@ -49,8 +49,21 @@ for filename in filename_list:
 
 # plot
 ax1.plot(pop_amount_arr)
-# configure the x-labels
-ax1.set_xticks([0, 744, 1464, 2208, 2952, 3672], ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
+# configure the x-labels and grid
+month_ticks = [0, 744, 1464, 2208, 2952, 3672]
+minor_ticks = [0, 186, 372, 558, 744,
+               930, 1116, 1302, 1464, 1674,
+               1860, 2046, 2208, 2418, 2604,
+               2790, 2952, 3162, 3348, 3534,
+               3672, 3906, 4062, 4278]
+ax1.set_xticks(month_ticks, ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
+ax1.set_xticks(minor_ticks, minor=True)
+
+# And a corresponding grid+2
+ax1.grid(which='both')
+# Or if you want different settings for the grids:
+ax1.grid(which='minor', alpha=0.2)
+ax1.grid(which='major', alpha=0.5)
 
 """ --------------- Plot of all the GTs on the lake --------------- """
 # create plot
