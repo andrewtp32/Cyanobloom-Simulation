@@ -41,42 +41,6 @@ class CameraImageViewer(object):
         # show the image for testing
         # cv2.imshow("Original image", cv_image)
 
-        # Pose of the blooms in the world frame (homogeneous 4D vector)
-        # for multiple blooms, the idea is to use a for-loop for each pose and add the variables to this vector
-        bloom1PoseWorldFrame4D = [[-32.0],
-                                  [-12.0],
-                                  [0.75],
-                                  [1.0]]
-
-        bloom2PoseWorldFrame4D = [[-30.0],
-                                  [-10.0],
-                                  [0.75],
-                                  [1.0]]
-
-        bloom3PoseWorldFrame4D = [[-32.0],
-                                  [-10.0],
-                                  [0.75],
-                                  [1.0]]
-
-        bloom4PoseWorldFrame4D = [[-27.0],
-                                  [-7.0],
-                                  [0.75],
-                                  [1.0]]
-
-        bloom5PoseWorldFrame4D = [[-25.0],
-                                  [-5.0],
-                                  [0.75],
-                                  [1.0]]
-
-        bloom6PoseWorldFrame4D = [[-27.0],
-                                  [-5.0],
-                                  [0.75],
-                                  [1.0]]
-
-        # A list containing multiple bloom poses (homogeneous 4D vectors)
-        bloomPoseWorldFrame4DList = [bloom1PoseWorldFrame4D, bloom2PoseWorldFrame4D, bloom3PoseWorldFrame4D,
-                                     bloom4PoseWorldFrame4D, bloom5PoseWorldFrame4D, bloom6PoseWorldFrame4D]
-
         # declaring bloom to drone distance
         bloomToDroneDistance = []
 
@@ -170,16 +134,30 @@ class CameraImageViewer(object):
             # T is the transformation matrix. This is the T from the world to the camera frame
             T_world_camera = np.dot(T_world_drone, T_drone_camera)
 
-            # -------------- 4. Compute pose of algae bloom in the camera frame -------------------
+            # -------------- 4. Compute pose of cyanobloom corners in the camera frame -------------------
 
             # Obtain inverse of the T_world_camera
             T_camera_world = np.linalg.inv(T_world_camera)
 
+            # each cell is a 30m x 30m square. calc the corners for the 2D projection
+            # calc the "start point" (top-left corner) of the cyanobloom square
+            top_left_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] - 15],
+                                              [bloomPoseWorldFrame4D[1] + 15],
+                                              [bloomPoseWorldFrame4D[2]],
+                                              [bloomPoseWorldFrame4D[3]]]
+            # calc the "end point" (bottom-right corner) of the cyanobloom square
+            bottom_right_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] + 15],
+                                                  [bloomPoseWorldFrame4D[1] - 15],
+                                                  [bloomPoseWorldFrame4D[2]],
+                                                  [bloomPoseWorldFrame4D[3]]]
+
             # Homogeneous 4D vector of the bloom pose in the camera frame
-            bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bloomPoseWorldFrame4D)
+            top_left_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, top_left_bloomPoseWorldFrame4D)
+            bottom_right_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bottom_right_bloomPoseWorldFrame4D)
 
             # Converting 4D vector into a 3D vector
-            bloomPoseCameraFrame = bloomPoseCameraFrame4DVector[0:3, 0:1]
+            top_left_BCF = top_left_bloomPoseCameraFrame4DVector[0:3, 0:1]
+            bottom_right_BCF = bottom_right_bloomPoseCameraFrame4DVector[0:3, 0:1]
 
             # -------------- 5. Obtain pinhole camera model from bloom pose in camera frame -------------------
 
@@ -189,55 +167,30 @@ class CameraImageViewer(object):
             alphaYF = 185.69
             y0 = 180.5
 
-            # gather individual x, y, and z values from the bloom pose in camera frame vector
-            bloomPoseCameraFrameX = bloomPoseCameraFrame[0][0]
-            bloomPoseCameraFrameY = bloomPoseCameraFrame[1][0]
-            bloomPoseCameraFrameZ = bloomPoseCameraFrame[2][0]
-
-            # gather individual x, y, and z values from the drone pose in world frame vector
-            dronePoseWorldFrameX = dronePoseWorldFrame[0][0]
-            dronePoseWorldFrameY = dronePoseWorldFrame[1][0]
-            dronePoseWorldFrameZ = dronePoseWorldFrame[2][0]
-
-            # gather individual x, y, and z values from the bloom pose in world frame vector
-            bloomPoseWorldFrameX = bloomPoseWorldFrame4D[0][0]
-            bloomPoseWorldFrameY = bloomPoseWorldFrame4D[1][0]
-            bloomPoseWorldFrameZ = bloomPoseWorldFrame4D[2][0]
-
             # get the x and y values of the pixel that corresponds to the bloom's pose in the camera frame
-            xI = ((alphaXF * bloomPoseCameraFrameX) / bloomPoseCameraFrameZ) + x0
-            yI = ((alphaYF * bloomPoseCameraFrameY) / bloomPoseCameraFrameZ) + y0
+            top_left_xI = ((alphaXF * top_left_BCF[0][0]) / top_left_BCF[0][2]) + x0
+            top_left_yI = ((alphaYF * top_left_BCF[0][1]) / top_left_BCF[0][2]) + y0
+            bottom_right_xI = ((alphaXF * bottom_right_BCF[0][0]) / bottom_right_BCF[0][2]) + x0
+            bottom_right_yI = ((alphaYF * bottom_right_BCF[0][1]) / bottom_right_BCF[0][2]) + y0
 
-            pixelLocations = [int(xI), int(yI)]
-
-            # compute the point-to-point distance from the bloom to the drone
-            bloomToDroneDistance = (((dronePoseWorldFrameX - bloomPoseWorldFrameX) ** 2)
-                                    + ((dronePoseWorldFrameY - bloomPoseWorldFrameY) ** 2)
-                                    + ((dronePoseWorldFrameZ - bloomPoseWorldFrameZ) ** 2))
+            pixel_locations = [int(top_left_xI), int(top_left_yI), int(bottom_right_xI), int(bottom_right_yI)]
 
             # add all the pixel coordinates to a list
-            bloomPoseImagePixelList.append(pixelLocations)
+            bloomPoseImagePixelList.append(pixel_locations)
 
-        # compute the radius of the bloom based upon how far away the bloom is from the drone
-        bloomSize = 1
-        focalLength = 1.738
-        # radiusOfBloom = int(5500 / bloomToDroneDistance)
-        alpha = 0.05
+        # -------------- draw shapes on image and publish -------------------
 
         # create two copies of the image
         cv_output = cv_image.copy()
         cv_overlay = cv_image.copy()
 
-        # create a variable that will count the number of pixel values in "bloomPoseImagePixelList"
-        count = 0
-
+        # apply each pixel to an overlay
         for pixels in bloomPoseImagePixelList:
-            count = 1.1 * (count + 1)
-            cv_overlay = cv_output.copy()
             # draw a yellow circle on camera image at the augmented point of bloom
-            cv2.circle(cv_overlay, (pixels[0], pixels[1]), 30, (255, 255, 0), -1)
-            # apply the overlay
-            cv2.addWeighted(cv_overlay, 0.3, cv_output, 0.7, 0, cv_output)
+            cv2.rectangle(cv_overlay, (pixels[0], pixels[1]), (pixels[2], pixels[3]), (255, 255, 0), -1)
+
+        # apply the overlay
+        cv2.addWeighted(cv_overlay, 0.3, cv_output, 0.7, 0, cv_output)
 
         # cv2.imshow("AR image", cv_output)
         cv2.waitKey(3)

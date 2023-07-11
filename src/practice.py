@@ -214,7 +214,7 @@ print(arr)
 """
 print(np.random.rand())
 """
-
+"""
 # find the center point of jess's data
 base_dir = (os.getcwd())[:-4]
 # read the csv for the month corresponding to the weather data
@@ -228,3 +228,7 @@ print(max_values[0], max_values[1])
 print(min_values[0], min_values[1])
 center_of_mass = [np.mean([max_values[0], min_values[0]]), np.mean([max_values[1], min_values[1]])]
 print(center_of_mass)
+"""
+
+p = 28 / 4
+print(p)

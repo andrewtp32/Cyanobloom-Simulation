@@ -624,11 +624,15 @@ center_of_mass = [np.mean([max_values[0], min_values[0]]), np.mean([max_values[1
 # create instance of the fuzzy model class
 f = FuzzyBloomModel()
 
-# initialize lists and arrays
+# initialize variables
 irradiance_list = []
 deg_bloom_app_log = []
 deg_bloom_dis_log = []
 particle_array = np.array([[0, 0]])
+population_t0 = 0
+population_t1 = 0
+birthrate_t0 = 0
+birthrate_t1 = 0
 
 # create plot
 # fig, ax = plt.subplots(figsize=[6, 8])
@@ -711,17 +715,27 @@ for index, data_vector in enumerate(weather_data_array):
                                                                     wind_speed * np.sin(wind_direction * np.pi / 180))))
 
     """---------- Particle spawn ----------"""
-    # particle spawn
-    # if deg bloom dis is appropriate and jess's data is also appropriate, then spawn particle
-    if deg_bloom_app_last_6hrs > 450:
+    population_t0 = len(particle_array)
+
+    # spawn particles if the deg of appearance is "very high"
+    if degree_bloom_appearance > 75:
         for mh in month_hot:
             # draw a random number
             rand_mh = np.random.rand()
-            # this is so that only 5 percent of the number of "hotspot" particles spawn
-            if rand_mh <= 0.05:
-                # append the HOT coordinates if the degree of formation is high enough
+
+            # this is so that only 1 percent of the number of "hotspot" particles spawn
+            if rand_mh <= 0.01:
                 particle_array = np.append(particle_array, [mh], axis=0)
                 num_births += 1
+
+            # calc the current birthrate
+            birthrate_t1 = (num_births + population_t0) / population_t0
+
+            # stop spawning particles if the number of births has exceeded the threshold. save the current birth rate so
+            # you can compare in the next time step
+            if birthrate_t1 > (1.10 * birthrate_t0):
+                birthrate_t0 = birthrate_t1
+                break
 
     """---------- Rearrange, Reproduce, Kill particles ----------"""
     if len(particle_array) > 1:
@@ -766,7 +780,7 @@ for index, data_vector in enumerate(weather_data_array):
 
             # kill particles
             # if there are a lot of bad hours in a row, kill 1% of particles
-            if (deg_bloom_dis_last_6hrs > 450) and (rand <= 0.02):
+            if (deg_bloom_dis_last_6hrs > 450) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
