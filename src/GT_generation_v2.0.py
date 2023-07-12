@@ -626,13 +626,8 @@ f = FuzzyBloomModel()
 
 # initialize variables
 irradiance_list = []
-deg_bloom_app_log = []
-deg_bloom_dis_log = []
 particle_array = np.array([[0, 0]])
-population_t0 = 0
-population_t1 = 0
-birthrate_t0 = 0
-birthrate_t1 = 0
+population_log = 0
 
 # create plot
 # fig, ax = plt.subplots(figsize=[6, 8])
@@ -645,6 +640,9 @@ for index, data_vector in enumerate(weather_data_array):
     deletion_index_array = np.array([])
     # draw a random number
     rand_num = np.random.rand()
+
+    # keep track fo the number of particles in the world at the start of each time step
+    population_log = len(particle_array)
 
     """---------- Keep count of birth and reproduction rate ----------"""
     num_births = 0
@@ -676,17 +674,6 @@ for index, data_vector in enumerate(weather_data_array):
     stability_first_leg, buoyancy_first_leg = f.first_leg(wind_speed, irradiance_over_last_6hrs, time_)
     degree_bloom_appearance, degree_bloom_disappearance = f.second_leg(stability_first_leg, buoyancy_first_leg)
 
-    # log the 6 most previous time steps of fuzzy logic outputs
-    deg_bloom_app_log.append(degree_bloom_appearance)
-    if len(deg_bloom_app_log) > 6:
-        deg_bloom_app_log = deg_bloom_app_log[-6:]
-    deg_bloom_app_last_6hrs = sum(deg_bloom_app_log)
-
-    deg_bloom_dis_log.append(degree_bloom_disappearance)
-    if len(deg_bloom_dis_log) > 6:
-        deg_bloom_dis_log = deg_bloom_dis_log[-6:]
-    deg_bloom_dis_last_6hrs = sum(deg_bloom_dis_log)
-
     """---------- Format Jess' data ----------"""
     # locate relevant satellite data
     month_df = full_df.loc[(full_df['Year'] == year) & (full_df['Month'] == month)]
@@ -715,29 +702,31 @@ for index, data_vector in enumerate(weather_data_array):
                                                                     wind_speed * np.sin(wind_direction * np.pi / 180))))
 
     """---------- Particle spawn ----------"""
-    population_t0 = len(particle_array)
-
-    # spawn particles if the deg of appearance is "very high"
+    # spawn particles if the deg of appearance is "very high" (if passing conditions)
     if degree_bloom_appearance > 75:
         for mh in month_hot:
             # draw a random number
             rand_mh = np.random.rand()
 
-            # this is so that only 1 percent of the number of "hotspot" particles spawn
-            if rand_mh <= 0.01:
+            # provide randomness so that the same spots aren't the only ones reproducing every time
+            if rand_mh <= 0.1:
                 particle_array = np.append(particle_array, [mh], axis=0)
                 num_births += 1
 
-            # calc the current birthrate
-            birthrate_t1 = (num_births + population_t0) / population_t0
-
             # stop spawning particles if the number of births has exceeded the threshold. save the current birth rate so
             # you can compare in the next time step
-            if birthrate_t1 > (1.10 * birthrate_t0):
-                birthrate_t0 = birthrate_t1
+            if num_births > (0.01 * population_log):
+                birth_count_t0 = num_births
                 break
 
+    # make sure to state that the birth count is 0 on step where there were no births
+    else:
+        birth_count_t0 = 0
+
     """---------- Rearrange, Reproduce, Kill particles ----------"""
+    # boolean for if particle can reproduce
+    can_reproduce = True
+
     if len(particle_array) > 1:
         # loop through the array of particles
         for i, particle in enumerate(particle_array):
@@ -757,58 +746,66 @@ for index, data_vector in enumerate(weather_data_array):
                 particle_array[i] = [hotspot_data_at_coordinate[0], hotspot_data_at_coordinate[1]]
 
             # reproduce particles
-            # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.005):
-                # append the reproduced particles
-                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
-                num_reproduced += 1
-            # if jess data is "not significant" and the deg bloom appearance is moderate or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 20) and (rand <= 0.005):
-                # append the reproduced particles
-                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
-                num_reproduced += 1
-            # if jess data is "cold" and the deg bloom appearance is high or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 1) and (degree_bloom_appearance >= 45) and (rand <= 0.005):
-                # append the reproduced particles
-                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
-                num_reproduced += 1
-            # if jess data is "very cold" and the deg bloom appearance is very high or more, then reproduce
-            if (hotspot_data_at_coordinate[5] >= 0) and (degree_bloom_appearance >= 75) and (rand <= 0.005):
-                # append the reproduced particles
-                particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
-                num_reproduced += 1
+            if can_reproduce:
+                # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
+                if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.001):
+                    # append the reproduced particles
+                    particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                    num_reproduced += 1
+                # if jess data is "not significant" and the deg bloom appearance is moderate or more, then reproduce
+                if (hotspot_data_at_coordinate[5] >= 2) and (degree_bloom_appearance >= 20) and (rand <= 0.001):
+                    # append the reproduced particles
+                    particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                    num_reproduced += 1
+                # if jess data is "cold" and the deg bloom appearance is high or more, then reproduce
+                if (hotspot_data_at_coordinate[5] >= 1) and (degree_bloom_appearance >= 45) and (rand <= 0.001):
+                    # append the reproduced particles
+                    particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                    num_reproduced += 1
+                # if jess data is "very cold" and the deg bloom appearance is very high or more, then reproduce
+                if (hotspot_data_at_coordinate[5] >= 0) and (degree_bloom_appearance >= 75) and (rand <= 0.001):
+                    # append the reproduced particles
+                    particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                    num_reproduced += 1
+
+            # stop reproducing particles if the number of births has exceeded the threshold. save the current birth
+            # rate, so you can compare in the next time step
+            if num_reproduced > (0.01 * population_log):
+                num_reproduced_t0 = num_reproduced
+                can_reproduce = False
 
             # kill particles
-            # if there are a lot of bad hours in a row, kill 1% of particles
-            if (deg_bloom_dis_last_6hrs > 450) and (rand <= 0.01):
-                # append the index to an array
-                deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.01):
+            if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.005):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "hot" and the deg bloom disappearance is high or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 3) and (degree_bloom_disappearance >= 45)) and (rand <= 0.01):
+            if ((hotspot_data_at_coordinate[5] == 3) and (degree_bloom_disappearance >= 45)) and (rand <= 0.005):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "not significant" and the deg bloom disappearance is moderate or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 20)) and (rand <= 0.01):
+            if ((hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 20)) and (rand <= 0.005):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "cold" and the deg bloom disappearance is low or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 9)) and (rand <= 0.01):
+            if ((hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 9)) and (rand <= 0.005):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "very cold" and the deg bloom disappearance is very low or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 1)) and (rand <= 0.01):
+            if ((hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 1)) and (rand <= 0.005):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
+
+    """---------- Calibrate the number of reproduce particles ----------"""
+    if num_reproduced == 0:
+        num_reproduced_t0 = 0
 
     """---------- Kill off the categorized particles ----------"""
     if len(deletion_index_array) > 1:
         # remove the particles from the array
         particle_array = np.delete(particle_array, deletion_index_array, 0)
 
+    """---------- Print out the results ----------"""
     print(f"Date: {month}/{day}/{year}, {time_}")
     print(f"Deg of app: {degree_bloom_appearance}")
     print(f"Deg of dis: {degree_bloom_disappearance}")
@@ -817,6 +814,7 @@ for index, data_vector in enumerate(weather_data_array):
     print(f"Num reproduced in latest step: {num_reproduced}")
     print(f"Num deaths in latest step: {len(deletion_index_array)}\n")
 
+    """---------- Save data to CSV ----------"""
     # move the center of mass to the origin (and scale so that 1m = 1 gazebo world unit)
     # place ground truth coordinates into txt file
     place_into_csv_file(convert_array_to_cartesian(particle_array, center_of_mass), save_folder_path,

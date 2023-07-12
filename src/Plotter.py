@@ -65,8 +65,10 @@ ax1.grid(which='both')
 # Or if you want different settings for the grids:
 ax1.grid(which='minor', alpha=0.2)
 ax1.grid(which='major', alpha=0.5)
+plt.show()
 
 """ --------------- Plot of all the GTs on the lake --------------- """
+'''
 # create plot
 fig0, ax0 = plt.subplots()
 ax0.set_aspect('equal')
@@ -88,3 +90,4 @@ for index, filename in enumerate(filename_list[2000:]):
     ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
     plt.pause(0.01)
     plt.cla()
+'''
