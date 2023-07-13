@@ -43,9 +43,13 @@ pop_amount_arr = []
 # read the txt files
 for filename in filename_list:
     # load the text file
-    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',')
-    # record the amount of particles at this time step
-    pop_amount_arr.append(len(ground_truth_scatter[1:]))
+    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',', skip_header=1)
+    try:
+        # record the amount of particles at this time step
+        pop_amount_arr.append(len(ground_truth_scatter))
+    except TypeError:
+        # if there is an error with the length of ground_truth_scatter, then just append the number 0
+        pop_amount_arr.append(0)
 
 # plot
 ax1.plot(pop_amount_arr)
@@ -78,7 +82,7 @@ for index, filename in enumerate(filename_list[2000:]):
     ground_truths_x = []
     ground_truths_y = []
     # load the text file
-    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',')
+    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',', skip_header=1)
     if len(ground_truth_scatter) > 0:
         # unzip GT
         ground_truths_x, ground_truths_y = zip(*ground_truth_scatter)
