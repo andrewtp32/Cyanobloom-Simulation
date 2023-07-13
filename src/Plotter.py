@@ -45,7 +45,7 @@ for filename in filename_list:
     # load the text file
     ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',')
     # record the amount of particles at this time step
-    pop_amount_arr.append(len(ground_truth_scatter))
+    pop_amount_arr.append(len(ground_truth_scatter[1:]))
 
 # plot
 ax1.plot(pop_amount_arr)

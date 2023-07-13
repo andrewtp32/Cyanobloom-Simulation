@@ -493,12 +493,13 @@ def convert_array_to_cartesian(global_coordinate_arr, center_point):
     return arr_at_origin * 111139
 
 
-def place_into_csv_file(array_of_points, save_path, file_name):
-    # place values into a cvs file
-    gt_file = open(f"{save_path}/{file_name}", "w")
-    # save values to a file
-    for v in array_of_points:
-        np.savetxt(gt_file, [v], delimiter=',')
+def place_into_csv_file(array_of_points, dat, tim, win_spe, win_dir, temp, save_path, file_name):
+    # open the file
+    with open(f"{save_path}/{file_name}", "w") as gt_file:
+        # write the first line
+        gt_file.write(f"date:{dat}, time:{tim}, wind_speed:{win_spe}, wind_dir:{win_dir}, temp:{temp}\n")
+        # write the values to the file
+        np.savetxt(gt_file, array_of_points)
 
 
 def generate_gaussian_distribution(mu, num_generated):
@@ -541,7 +542,7 @@ def generate_drone_desired_positions_for_images_txt_file(array_of_points):
 
 def create_CSV_from_API(coordinate, s_date, e_date):
     # fill the api query
-    api_query = f"https://archive-api.open-meteo.com/v1/archive?latitude={coordinate[0]}&longitude={coordinate[1]}&start_date={s_date}&end_date={e_date}&hourly=direct_normal_irradiance,windspeed_10m,winddirection_10m&timezone=auto&windspeed_unit=ms&format=csv "
+    api_query = f"https://archive-api.open-meteo.com/v1/archive?latitude={coordinate[0]}&longitude={coordinate[1]}&start_date={s_date}&end_date={e_date}&hourly=direct_normal_irradiance,windspeed_10m,winddirection_10m,temperature_2m&timezone=auto&windspeed_unit=ms&format=csv "
     # This part is for opening url and checking errors. not really sure what it all does exactly but kinda of get it
     try:
         CSV_bytes = urllib.request.urlopen(api_query)
@@ -581,11 +582,13 @@ def create_data_arr_from_CSV(CSV_file):
             # get irradiation
             irradiation = row[1]
             # get wind speed
-            wind_speed = row[2]
+            win_speed = row[2]
             # get wind direction
-            wind_direction = row[3]
+            win_direction = row[3]
+            # get temperature
+            temp = row[4]
             # append values to the list
-            data_arr.append([date, time_of_day, irradiation, wind_speed, wind_direction])
+            data_arr.append([date, time_of_day, irradiation, win_speed, win_direction, temp])
 
     # If there are no CSV rows then something fundamental went wrong
     if len(data_arr) == 0:
@@ -655,6 +658,7 @@ for index, data_vector in enumerate(weather_data_array):
     irradiance = float(data_vector[2])
     wind_speed = float(data_vector[3])
     wind_direction = float(data_vector[4])
+    temperature = float(data_vector[5])
 
     # extract the year and month values from the "date"
     year = int(date[:4])
@@ -817,7 +821,8 @@ for index, data_vector in enumerate(weather_data_array):
     """---------- Save data to CSV ----------"""
     # move the center of mass to the origin (and scale so that 1m = 1 gazebo world unit)
     # place ground truth coordinates into txt file
-    place_into_csv_file(convert_array_to_cartesian(particle_array, center_of_mass), save_folder_path,
+    place_into_csv_file(convert_array_to_cartesian(particle_array, center_of_mass), date, ('%04.f' % time_),
+                        wind_speed, wind_direction, temperature, save_folder_path,
                         f"{year}-{('%02.f' % month)}-{('%02.f' % day)}-{('%04.f' % time_)}")
 
 # print the total time to complete program
