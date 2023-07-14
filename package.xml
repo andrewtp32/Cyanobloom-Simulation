@@ -8,10 +8,6 @@
 
   <license>MIT</license>
 
-  <url type="website">https://github.com/andrewtp32/Cyanobloom-Simulation>
-
-  <author email="andrewtp32@gmail.com">Drew Phillips</author>
-
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->

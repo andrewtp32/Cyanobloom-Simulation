@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" value="false"/>
+  <arg name="use_sim_time" value="true"/>
+  <arg name="gui" default="false"/>
+  <arg name="headless" value="false"/>
+  <arg name="debug" value="false"/>
+  <arg name="world_name" default="$(find cyanobloom_simulation)/worlds/test_AR.world"/>
+ 
+  
+  <!-- launch the custom world  -->
+  <include file="$(find cyanobloom_simulation)/worlds/test_AR.world" >
+        <arg name="paused" value="True"/>
+        <arg name="world_name" value="$(arg world_name)"/>
+        <arg name="verbose" value="True"/>
+  </include>
+
+  <!-- This launches the keyboard controller, the bloom drawing script, the camera image viewer, the script that moves the drone to a specific location, and the bloom finder node, respecfully -->
+  <node name="drone_keyboard" pkg="cyanobloom_simulation" type="drone_keyboard"/>
+  <node name="drone_camera_AR" pkg="cyanobloom_simulation" type="drone_camera_AR.py" />
+  <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+
+</launch>
