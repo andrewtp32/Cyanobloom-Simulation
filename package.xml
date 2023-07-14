@@ -1,39 +1,44 @@
 <?xml version="1.0"?>
-<package>
-  <name>cyanobloom_simulation</name>
+<package format="2">
+  <name>cyanobloom-simulation</name>
   <version>0.0.0</version>
-  <description>The sjtu_drone package</description>
- 
-  <maintainer email="dpzou@sjtu.edu.cn">dpzou</maintainer>
+  <description>The cyanobloom-simulation package</description>
 
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>GPLv2</license>
+  <maintainer email="andrewtp32@gmail.com">drew</maintainer>
+
+  <license>MIT</license>
+
+  <url type="website">https://github.com/andrewtp32/Cyanobloom-Simulation>
+
+  <author email="andrewtp32@gmail.com">Drew Phillips</author> -->
 
 
-
+  <!-- The *depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <!-- Examples: -->
+  <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
+  <!--   <depend>roscpp</depend> -->
+  <!--   Note that this is equivalent to the following: -->
+  <!--   <build_depend>roscpp</build_depend> -->
+  <!--   <exec_depend>roscpp</exec_depend> -->
+  <!-- Use build_depend for packages you need at compile time: -->
+  <!--   <build_depend>message_generation</build_depend> -->
+  <!-- Use build_export_depend for packages you need in order to build against this package: -->
+  <!--   <build_export_depend>message_generation</build_export_depend> -->
+  <!-- Use buildtool_depend for build tool packages: -->
+  <!--   <buildtool_depend>catkin</buildtool_depend> -->
+  <!-- Use exec_depend for packages you need at runtime: -->
+  <!--   <exec_depend>message_runtime</exec_depend> -->
+  <!-- Use test_depend for packages you need only for testing: -->
+  <!--   <test_depend>gtest</test_depend> -->
+  <!-- Use doc_depend for packages you need only for building documentation: -->
+  <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>image_transport</build_depend>
-  <build_depend>message_generation</build_depend>
-  
 
-  <run_depend>roscpp</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>image_transport</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>gazebo_ros</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
   <export>
-  <gazebo_ros
-        plugin_path="${prefix}/plugins"
-        gazebo_model_path="${prefix}/models"                                                                 
-        gazebo_media_path="${prefix}" /> 
+    <!-- Other tools can request additional information be placed here -->
+
   </export>
 </package>
