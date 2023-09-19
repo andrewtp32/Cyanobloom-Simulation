@@ -24,10 +24,10 @@ base_dir = (os.getcwd())[:-4]
 lower_range_water = np.array([91, 57, 211])
 upper_range_water = np.array([100, 63, 234])
 # initialize strings for directory and file path
-OSM_data_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/openstreetmap_data_files/SabattusPond.osm"
-openstreetmap_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/openstreetmap_screenshots/SabattusPond.png"
+OSM_data_file_path = f"{base_dir}/openstreetmap_data_files/SabattusPond.osm"
+openstreetmap_file_path = f"{base_dir}/openstreetmap_screenshots/SabattusPond.png"
 save_folder_path = f"{base_dir}/ground_truths/SabattusPond/2016"
-flight_path_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s MacBook Air/College/PaoloLab/uri_soft_wip/cyanobloom_simulation/drone_picture_coordinates/SabattusPond"
+flight_path_file_path = f"{base_dir}/drone_picture_coordinates/SabattusPond"
 # Optional start and end dates
 # If nothing is specified, the forecast is retrieved.
 # If start date only is specified, a single historical or forecast day will be retrieved

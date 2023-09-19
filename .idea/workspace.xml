@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56bffe14-8b4c-422f-8fd7-27db5fccb65a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/GT_generation_v2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/GT_generation_v2.0.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Plotter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Plotter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,9 +26,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2SkgkuUhdcyopskhHkCUzNWsINF" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
