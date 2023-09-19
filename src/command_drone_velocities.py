@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-import math
+import numpy as np
 from std_msgs.msg import Empty
 from std_msgs.msg import String
 from geometry_msgs.msg import Pose
@@ -9,7 +9,7 @@ from sensor_msgs.msg import PointCloud
 from tf.transformations import euler_from_quaternion
 
 # this is a global variable: all functions and methods in this file have access to it
-cmd_pub = rospy.Publisher("/drone_0/cmd_vel", Twist, queue_size=1)
+cmd_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
 
 error_integral_x = 0
 error_integral_y = 0
@@ -39,7 +39,7 @@ def pose_callback(msg):
     global desired_y
     global desired_z
 
-    print("Desired position: ", desired_x, desired_y)
+    print("[drone_command_velocities] Desired position: ", desired_x, desired_y)
 
     # Position of the drone
     px = msg.position.x
@@ -52,11 +52,8 @@ def pose_callback(msg):
     oz = msg.orientation.z
     ow = msg.orientation.w
 
-    # create a list containing the components of the drone's quaternion
-    orientation_list = [ox, oy, oz, ow]
-
     # convert quaternion to roll, pitch, and yaw
-    (rollDrone, pitchDrone, yawDrone) = euler_from_quaternion(orientation_list)
+    (roll_drone, pitch_drone, yaw_drone) = euler_from_quaternion([ox, oy, oz, ow])
 
     # This is where I will include the desired drone poses from the drone_positioning_manager node
     # set the desired flight height here, and the gains of the controller
@@ -106,9 +103,8 @@ def pose_callback(msg):
     # and I publish it on the appropriate topic
     cmdmsg = Twist()
     cmdmsg.linear.z = linear_velocity_z
-    cmdmsg.linear.y = (-1 * math.sin(yawDrone) * linear_velocity_x) + (math.cos(yawDrone) * linear_velocity_y)
-    cmdmsg.linear.x = (math.cos(yawDrone) * linear_velocity_x) + (math.sin(yawDrone) * linear_velocity_y)
-    # print(cmdmsg)
+    cmdmsg.linear.y = (-1 * np.sin(yaw_drone) * linear_velocity_x) + (np.cos(yaw_drone) * linear_velocity_y)
+    cmdmsg.linear.x = (np.cos(yaw_drone) * linear_velocity_x) + (np.sin(yaw_drone) * linear_velocity_y)
     cmd_pub.publish(cmdmsg)
 
 
@@ -133,7 +129,7 @@ def controller():
     rospy.init_node('drone_command_velocities', anonymous=False)
 
     rospy.Subscriber("/desired_drone_pose", PointCloud, pointcloud_callback)
-    rospy.Subscriber("/drone_0/gt_pose", Pose, pose_callback, queue_size=1)
+    rospy.Subscriber("/drone/gt_pose", Pose, pose_callback, queue_size=1)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

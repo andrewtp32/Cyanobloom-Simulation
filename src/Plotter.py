@@ -32,7 +32,8 @@ month_df_coordinates.to_numpy()
 month_coordinates_arr = np.array(month_df_coordinates)
 # reformat the coordinates
 month_coordinates_arr = convert_array_to_cartesian(month_coordinates_arr, [-70.09755158499999, 44.145137175])
-
+# scale down by a factor of 10
+month_coordinates_arr = month_coordinates_arr / 10
 """ --------------- Line graphs of the particle population at each step --------------- """
 # create a plot
 fig1, ax1 = plt.subplots()
@@ -72,7 +73,7 @@ ax1.grid(which='major', alpha=0.5)
 plt.show()
 
 """ --------------- Plot of all the GTs on the lake --------------- """
-'''
+
 # create plot
 fig0, ax0 = plt.subplots()
 ax0.set_aspect('equal')
@@ -82,7 +83,13 @@ for index, filename in enumerate(filename_list[2000:]):
     ground_truths_x = []
     ground_truths_y = []
     # load the text file
-    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=',', skip_header=1)
+    # with open(f'{directory}/{filename}') as file:
+    #     for line in file:
+    #         ground_truths_x.append(line[0])
+    #         ground_truths_y.append(line[1])
+    # print(ground_truths_x)
+    ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=' ', skip_header=1)
+    print(ground_truth_scatter)
     if len(ground_truth_scatter) > 0:
         # unzip GT
         ground_truths_x, ground_truths_y = zip(*ground_truth_scatter)
@@ -94,4 +101,3 @@ for index, filename in enumerate(filename_list[2000:]):
     ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
     plt.pause(0.01)
     plt.cla()
-'''

@@ -3,43 +3,37 @@ import rospy
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import PointCloud
 from geometry_msgs.msg import Pose
-from geometry_msgs.msg import Point32
 from cv_bridge import CvBridge, CvBridgeError
 from tf.transformations import euler_from_quaternion
-from cyanob_phd_filter.msg import diagnostics
 import cv2
 import numpy as np
-import time
-import math
-import std_msgs.msg
-from cyanob_phd_filter.msg import diagnostics
 
 
 class CameraImageViewer(object):
     def __init__(self):
-        print("2")
+        # print("2")
         self.px, self.py, self.pz, self.ox, self.oy, self.oz, self.ow = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         self.bloomPoseWorldFrame4DList = []
         self.bloomfilename = []  # this will store frame id of /particle_list_for_gazebo.
         self.orientation_q = []
-        self.image_sub = rospy.Subscriber("/drone/front_camera/image_raw", Image, self.camera_callback)
-        self.pose_sub = rospy.Subscriber("/drone_0/gt_pose", Pose, self.pose_callback)
+        self.image_sub = rospy.Subscriber("/drone/down_camera/image_raw", Image, self.camera_callback)
+        self.pose_sub = rospy.Subscriber("/drone/gt_pose", Pose, self.pose_callback)
         self.pointcloud_sub = rospy.Subscriber("/particle_list_for_gazebo", PointCloud, self.pointcloud_callback)
         # self.filterdiagnostics_sub = rospy.Subscriber("system_Diagnostics", diagnostics, self.callback_diagnostics)
         self.bridge_object = CvBridge()
-        self.image_pub = rospy.Publisher("/drone/front_camera/image_raw/bloom", Image, queue_size=1)
-        print("3")
+        self.image_pub = rospy.Publisher("/drone/down_camera/bloom_filter", Image, queue_size=1)
+        # print("3")
 
     # def callback_diagnostics(self,msg):
 
     def camera_callback(self, Image):  # "data" is the image coming from the callback
-        print("4")
+        # print("4")
 
         # Converting to a CV image
         cv_image = self.bridge_object.imgmsg_to_cv2(Image, desired_encoding="passthrough")
 
         # show the image for testing
-        # cv2.imshow("Original image", cv_image)
+        cv2.imshow("Original image", cv_image)
 
         # declaring bloom to drone distance
         bloomToDroneDistance = []
@@ -62,19 +56,19 @@ class CameraImageViewer(object):
             #     | r11  r12  r13 |
             # R = | r21  r22  r23 |
             #     | r31  r32  r33 |
-            r11 = math.cos(pitchDrone) * math.cos(yawDrone)
-            r12 = math.sin(rollDrone) * math.sin(pitchDrone) * math.cos(yawDrone) - math.cos(rollDrone) * math.sin(
+            r11 = np.cos(pitchDrone) * np.cos(yawDrone)
+            r12 = np.sin(rollDrone) * np.sin(pitchDrone) * np.cos(yawDrone) - np.cos(rollDrone) * np.sin(
                 yawDrone)
-            r13 = math.cos(rollDrone) * math.sin(pitchDrone) * math.cos(yawDrone) + math.sin(rollDrone) * math.sin(
+            r13 = np.cos(rollDrone) * np.sin(pitchDrone) * np.cos(yawDrone) + np.sin(rollDrone) * np.sin(
                 yawDrone)
-            r21 = math.cos(pitchDrone) * math.sin(yawDrone)
-            r22 = math.sin(rollDrone) * math.sin(pitchDrone) * math.sin(yawDrone) + math.cos(rollDrone) * math.cos(
+            r21 = np.cos(pitchDrone) * np.sin(yawDrone)
+            r22 = np.sin(rollDrone) * np.sin(pitchDrone) * np.sin(yawDrone) + np.cos(rollDrone) * np.cos(
                 yawDrone)
-            r23 = math.cos(rollDrone) * math.sin(pitchDrone) * math.sin(yawDrone) - math.sin(rollDrone) * math.cos(
+            r23 = np.cos(rollDrone) * np.sin(pitchDrone) * np.sin(yawDrone) - np.sin(rollDrone) * np.cos(
                 yawDrone)
-            r31 = -1 * math.sin(pitchDrone)
-            r32 = math.sin(rollDrone) * math.cos(pitchDrone)
-            r33 = math.cos(rollDrone) * math.cos(pitchDrone)
+            r31 = -1 * np.sin(pitchDrone)
+            r32 = np.sin(rollDrone) * np.cos(pitchDrone)
+            r33 = np.cos(rollDrone) * np.cos(pitchDrone)
 
             # create the rotation matrix from world to drone
             rotationMatrixWorldToDrone = np.array([[r11, r12, r13],
@@ -95,7 +89,7 @@ class CameraImageViewer(object):
             # Roll, pitch, and yaw angles from drone frame to camera frame
             # rotation values gathered from the camera portion of the .sdf file of the quadcopter
             rollCamera = 0.0
-            pitchCamera = 1.57 + (math.pi / 2)  # camera initializes with pitch = pi/2 with respect to the camera
+            pitchCamera = 1.57 + (np.pi / 2)  # camera initializes with pitch = pi/2 with respect to the camera
             yawCamera = 1.57
 
             cameraPoseDroneFrame = [[0.0],
@@ -106,19 +100,19 @@ class CameraImageViewer(object):
             #     | R11  R12  R13 |
             # r = | R21  R22  R23 |
             #     | R31  R32  R33 |
-            R11 = math.cos(pitchCamera) * math.cos(yawCamera)
-            R12 = math.sin(rollCamera) * math.sin(pitchCamera) * math.cos(yawCamera) - math.cos(rollCamera) * math.sin(
+            R11 = np.cos(pitchCamera) * np.cos(yawCamera)
+            R12 = np.sin(rollCamera) * np.sin(pitchCamera) * np.cos(yawCamera) - np.cos(rollCamera) * np.sin(
                 yawCamera)
-            R13 = math.cos(rollCamera) * math.sin(pitchCamera) * math.cos(yawCamera) + math.sin(rollCamera) * math.sin(
+            R13 = np.cos(rollCamera) * np.sin(pitchCamera) * np.cos(yawCamera) + np.sin(rollCamera) * np.sin(
                 yawCamera)
-            R21 = math.cos(pitchCamera) * math.sin(yawCamera)
-            R22 = math.sin(rollCamera) * math.sin(pitchCamera) * math.sin(yawCamera) + math.cos(rollCamera) * math.cos(
+            R21 = np.cos(pitchCamera) * np.sin(yawCamera)
+            R22 = np.sin(rollCamera) * np.sin(pitchCamera) * np.sin(yawCamera) + np.cos(rollCamera) * np.cos(
                 yawCamera)
-            R23 = math.cos(rollCamera) * math.sin(pitchCamera) * math.sin(yawCamera) - math.sin(rollCamera) * math.cos(
+            R23 = np.cos(rollCamera) * np.sin(pitchCamera) * np.sin(yawCamera) - np.sin(rollCamera) * np.cos(
                 yawCamera)
-            R31 = -1 * math.sin(pitchCamera)
-            R32 = math.sin(rollCamera) * math.cos(pitchCamera)
-            R33 = math.cos(rollCamera) * math.cos(pitchCamera)
+            R31 = -1 * np.sin(pitchCamera)
+            R32 = np.sin(rollCamera) * np.cos(pitchCamera)
+            R33 = np.cos(rollCamera) * np.cos(pitchCamera)
 
             # obtain the rotation matrix from the drone to the camera
             rotationMatrixDroneToCamera = np.array([[R11, R12, R13],
@@ -199,7 +193,7 @@ class CameraImageViewer(object):
         msg = self.bridge_object.cv2_to_imgmsg(cv_output, encoding="rgb8")  # converting crop_img from cv to ros msg
         self.image_pub.publish(msg)
 
-        print("5")
+        # print("5")
 
     def pose_callback(self, Pose):
         self.px = Pose.position.x
@@ -228,7 +222,7 @@ class CameraImageViewer(object):
 
 
 def main():
-    print("1")
+    # print("1")
     bloom_filter_object = CameraImageViewer()
     rospy.init_node('bloom_filter_node', anonymous=True)
     try:

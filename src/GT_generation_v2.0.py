@@ -31,7 +31,7 @@ flight_path_file_path = "/Users/andrewphillips/Documents/Documents - Andrew’s 
 # Optional start and end dates
 # If nothing is specified, the forecast is retrieved.
 # If start date only is specified, a single historical or forecast day will be retrieved
-# If both start and and end date are specified, a date range will be retrieved
+# If both start and end date are specified, a date range will be retrieved
 start_date = '2016-05-01'
 end_date = '2016-10-31'
 
@@ -489,8 +489,8 @@ class BloomGUI:
 def convert_array_to_cartesian(global_coordinate_arr, center_point):
     # move to origin
     arr_at_origin = global_coordinate_arr - center_point
-    # scale to meters and return
-    return arr_at_origin * 111139
+    # scale to meters (meters * 1/10) and return
+    return arr_at_origin * 11113.9
 
 
 def place_into_csv_file(array_of_points, dat, tim, win_spe, win_dir, temp, save_path, file_name):

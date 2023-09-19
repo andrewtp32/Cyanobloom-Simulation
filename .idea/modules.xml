@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Cyanobloom-Simulation.iml" filepath="$PROJECT_DIR$/.idea/Cyanobloom-Simulation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/cyanobloom-simulation.iml" filepath="$PROJECT_DIR$/.idea/cyanobloom-simulation.iml" />
     </modules>
   </component>
 </project>

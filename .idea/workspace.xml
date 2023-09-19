@@ -4,19 +4,89 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7c4df9a3-4b68-434d-89ed-1b98b43319d6" name="Changes" comment="">
+    <list default="true" id="56bffe14-8b4c-422f-8fd7-27db5fccb65a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/waypoint_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Cyanobloom-Simulation.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Matlab_Scripts/callback_pointmsg.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Matlab_Scripts/visualization.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/drone_picture_coordinates/SabattusPond/drone_flight_path.txt" beforeDir="false" afterPath="$PROJECT_DIR$/drone_picture_coordinates/SabattusPond/drone_flight_path.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0400" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0600" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0700" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-0900" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1000" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1400" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1600" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1700" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-1900" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-01-2300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0000" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0300" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0400" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0600" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0700" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-0900" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1400" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1600" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1700" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-1900" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-02-2300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0400" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0600" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0700" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-0900" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1100" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1300" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1400" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1400" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1500" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1600" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1600" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1700" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1700" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1800" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1800" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1900" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-1900" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2100" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2200" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-03-2300" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0000" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0000" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0100" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-05-04-0200" afterDir="false" />
@@ -4361,13 +4431,97 @@
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2100" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2100" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2200" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2200" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2300" beforeDir="false" afterPath="$PROJECT_DIR$/ground_truths/SabattusPond/2016/2016-10-31-2300" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/DialogKeyboard.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/drone_keyboard.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/drone_keyboard.qrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/drone_object_ros.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/pid_controller.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/plugin_drone.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/plugin_ros_cam.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/plugin_ros_imu.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/plugin_ros_imu_native.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/plugin_ros_sonar.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/sensor_model.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/util_ros_cam.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/launch/test_AR.launch" beforeDir="false" afterPath="$PROJECT_DIR$/launch/test_AR.launch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/launch/yawgoog_pond.launch" beforeDir="false" afterPath="$PROJECT_DIR$/launch/yawgoog_pond.launch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/mesh.blend" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/mesh.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/mesh_below.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_2.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_2.stl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_3.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_3.stl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_4.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_4.stl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_base.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meshes/quadrotor/quadrotor_base.stl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/YawgoogPond/model.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/YawgoogPond/model.sdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/database.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/drone_keyboard.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/programs/GerstnerWaves.frag" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/programs/GerstnerWaves.vert" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/scripts/waves.material" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_bk.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_dn.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_fr.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_lf.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_rt.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/clouds_up.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/materials/textures/wave_normals.dds" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/meshes/mesh.blend" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/meshes/mesh.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/meshes/mesh_below.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/model.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/model.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/ocean_waves/model.xacro.erb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/sjtu_drone/model.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/sjtu_drone/quadrotor_4.dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/sjtu_drone/quadrotor_4.stl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/sjtu_drone/sjtu_drone.sdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/package.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/libplugin_drone.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/libplugin_ros_cam.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/libplugin_ros_imu.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/libplugin_ros_init.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/libplugin_ros_sonar.so" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GT_generation_v2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/GT_generation_v2.0.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Plotter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Plotter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/drone_camera_AR.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/drone_camera_AR.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/drone_command_velocities.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/command_drone_velocities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/drone_positioning_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/drone_positioning_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/dynamics/wamv_gazebo_dynamics_plugin.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/macros.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/lidar.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_3d_lidar.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_camera.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_gps.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_imu.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_p3d.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_pinger.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/sensors/wamv_planar_lidar.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/thruster_layouts/wamv_aft_thrusters.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/thruster_layouts/wamv_gazebo_thruster_config.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/thruster_layouts/wamv_t_thrusters.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/thruster_layouts/wamv_x_thrusters.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/wamv_gazebo.urdf.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urdf/wamv_gazebo.xacro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/worlds/YawgoogPond.world" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/worlds/test_AR.world" beforeDir="false" afterPath="$PROJECT_DIR$/worlds/test_AR.world" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -4375,8 +4529,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2SOGiWm4DaAe9J1wSOd8s9zeRtT" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2SkgkuUhdcyopskhHkCUzNWsINF" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -4384,34 +4540,12 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
-    <configuration name="GT_generation_v2.0 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Cyanobloom-Simulation" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/GT_generation_v2.0.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.Plotter">
     <configuration name="GT_generation_v2.0" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Cyanobloom-Simulation" />
+      <module name="cyanobloom-simulation" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -4431,8 +4565,8 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="practice" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Cyanobloom-Simulation" />
+    <configuration name="Plotter" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="cyanobloom-simulation" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -4443,7 +4577,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/practice.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/Plotter.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -4454,21 +4588,31 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.GT_generation_v2.0 (1)" />
+        <item itemvalue="Python.Plotter" />
         <item itemvalue="Python.GT_generation_v2.0" />
-        <item itemvalue="Python.practice" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7c4df9a3-4b68-434d-89ed-1b98b43319d6" name="Changes" comment="" />
-      <created>1689010344634</created>
+      <changelist id="56bffe14-8b4c-422f-8fd7-27db5fccb65a" name="Changes" comment="" />
+      <created>1689696140358</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1689010344634</updated>
+      <updated>1689696140358</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

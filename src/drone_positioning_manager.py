@@ -64,7 +64,7 @@ def pose_callback(msg):
         if px_error <= 0.05 and py_error <= 0.05:
             print("[DronePosManger] Drone is in range. Moving on to next point.")
             time.sleep(1.5)
-            if droneReturningHome == False:
+            if not droneReturningHome:
                 counter += 1
                 if counter >= len(drone_desired_position_list):  # this if statement checks to see if
                     sd_msg.measurement_update = 'stop'

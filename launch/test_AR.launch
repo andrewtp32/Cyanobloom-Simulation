@@ -1,24 +1,37 @@
 <?xml version="1.0"?>
 <launch>
-  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="paused" value="false"/>
-  <arg name="use_sim_time" value="true"/>
-  <arg name="gui" default="false"/>
-  <arg name="headless" value="false"/>
-  <arg name="debug" value="false"/>
-  <arg name="world_name" default="$(find cyanobloom_simulation)/worlds/test_AR.world"/>
+
+	<env name="GAZEBO_MODEL_PATH" value="$(find cyanobloom-simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+	<env name="GAZEBO_RESOURCE_PATH" value="$(find cyanobloom-simulation)/worlds:$(optenv GAZEBO_RESOURCE_PATH)"/> 
+	<env name="GAZEBO_PLUGIN_PATH" value="$(find cyanobloom-simulation)/plugins:$(optenv GAZEBO_PLUGIN_PATH)"/>
+  
+	<!-- these are the arguments you can pass this launch file, for example paused:=true -->
+	<arg name="paused" value="false"/>
+	<arg name="use_sim_time" value="true"/>
+	<arg name="gui" default="false"/>
+	<arg name="headless" value="false"/>
+	<arg name="debug" value="false"/>
  
   
-  <!-- launch the custom world  -->
-  <include file="$(find cyanobloom_simulation)/worlds/test_AR.world" >
-        <arg name="paused" value="True"/>
-        <arg name="world_name" value="$(arg world_name)"/>
-        <arg name="verbose" value="True"/>
-  </include>
+	<!-- launch the custom world  -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="paused" value="$(arg paused)"/>
+		<arg name="world_name" value="$(find cyanobloom-simulation)/worlds/test_AR.world"/>
+		<arg name="verbose" value="True"/>
+	</include>
+	
+	<!-- send robot urdf to param server -->
+	<param name="robot_description" command="cat '$(find sjtu_drone)/urdf/sjtu_drone.urdf'" />
 
-  <!-- This launches the keyboard controller, the bloom drawing script, the camera image viewer, the script that moves the drone to a specific location, and the bloom finder node, respecfully -->
-  <node name="drone_keyboard" pkg="cyanobloom_simulation" type="drone_keyboard"/>
-  <node name="drone_camera_AR" pkg="cyanobloom_simulation" type="drone_camera_AR.py" />
-  <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+	<!-- push robot_description to factory and spawn robot in gazebo at the origin, change x,y,z arguments to spawn in a different position -->
+	<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model sjtu_drone -x 0 -y 0 -z 0" respawn="false" output="screen" />
+
+	<!-- Launch nodes -->
+	<node name="drone_keyboard" pkg="sjtu_drone" type="drone_keyboard"/>
+	<node name="waypoint_manager" pkg="cyanobloom-simulation" type="waypoint_manager.py" output="screen"/>
+	<node name="command_drone_velocities" pkg="cyanobloom-simulation" type="command_drone_velocities.py"/>
+	<node name="drone_camera_AR" pkg="cyanobloom-simulation" type="drone_camera_AR.py"/>
+	<node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/> 
+	<node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/> 
 
 </launch>
