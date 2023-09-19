@@ -34,6 +34,10 @@ month_coordinates_arr = np.array(month_df_coordinates)
 month_coordinates_arr = convert_array_to_cartesian(month_coordinates_arr, [-70.09755158499999, 44.145137175])
 # scale down by a factor of 10
 month_coordinates_arr = month_coordinates_arr / 10
+# save file
+with open(f"{(os.getcwd())[:-4]}/jess_sat_data/water_boundary_points_scaled.txt", "w") as gt_file:
+    # write the values to the file
+    np.savetxt(gt_file, month_coordinates_arr)
 """ --------------- Line graphs of the particle population at each step --------------- """
 # create a plot
 fig1, ax1 = plt.subplots()
