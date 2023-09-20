@@ -38,7 +38,7 @@ month_coordinates_arr = month_coordinates_arr / 10
 # save water boundary points
 with open(f"{(os.getcwd())[:-4]}/jess_sat_data/water_boundary_points_scaled.txt", "w") as gt_file:
     # write the values to the file
-    np.savetxt(gt_file, 10 * month_coordinates_arr / 3, '%f')
+    np.savetxt(gt_file, month_coordinates_arr, '%f')
 
 """ --------------- Line graphs of the particle population at each step --------------- """
 # create a plot
