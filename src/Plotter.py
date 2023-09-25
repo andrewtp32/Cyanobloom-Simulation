@@ -85,7 +85,7 @@ fig0, ax0 = plt.subplots()
 ax0.set_aspect('equal')
 
 # read the txt files
-for index, filename in enumerate(filename_list[2000:]):
+for index, filename in enumerate(filename_list[::24]):
     ground_truths_x = []
     ground_truths_y = []
     # load the text file
@@ -95,8 +95,7 @@ for index, filename in enumerate(filename_list[2000:]):
     #         ground_truths_y.append(line[1])
     # print(ground_truths_x)
     ground_truth_scatter = genfromtxt(f'{directory}/{filename}', delimiter=' ', skip_header=1)
-    print(ground_truth_scatter)
-    if len(ground_truth_scatter) > 0:
+    if len(ground_truth_scatter) > 10:
         # unzip GT
         ground_truths_x, ground_truths_y = zip(*ground_truth_scatter)
     # unzip GT

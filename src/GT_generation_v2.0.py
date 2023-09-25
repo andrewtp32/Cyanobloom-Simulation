@@ -499,7 +499,7 @@ def place_into_csv_file(array_of_points, dat, tim, win_spe, win_dir, temp, save_
         # write the first line
         gt_file.write(f"date:{dat}, time:{tim}, wind_speed:{win_spe}, wind_dir:{win_dir}, temp:{temp}\n")
         # write the values to the file
-        np.savetxt(gt_file, array_of_points)
+        np.savetxt(gt_file, array_of_points, '%f')
 
 
 def generate_gaussian_distribution(mu, num_generated):
@@ -697,7 +697,7 @@ for index, data_vector in enumerate(weather_data_array):
 
     """---------- Migrate the particles based on wind speed and direction ----------"""
     # particle movement (multiply by some slope and angle, i.e., the wind speed and direction from data)
-    wnd_damp_param = 0.00002
+    wnd_damp_param = 0.00001
     if len(particle_array) > 1:
         arr_x, arr_y = zip(*particle_array)
         particle_array = np.column_stack((arr_x + wnd_damp_param * (np.add(-0.5, np.random.rand(len(arr_x))) +
@@ -713,15 +713,15 @@ for index, data_vector in enumerate(weather_data_array):
             rand_mh = np.random.rand()
 
             # provide randomness so that the same spots aren't the only ones reproducing every time
-            if rand_mh <= 0.1:
+            if rand_mh <= 0.01:
                 particle_array = np.append(particle_array, [mh], axis=0)
                 num_births += 1
 
             # stop spawning particles if the number of births has exceeded the threshold. save the current birth rate so
             # you can compare in the next time step
-            if num_births > (0.01 * population_log):
-                birth_count_t0 = num_births
-                break
+            # if num_births > (0.01 * population_log):
+            #     birth_count_t0 = num_births
+            #     break
 
     # make sure to state that the birth count is 0 on step where there were no births
     else:
@@ -774,9 +774,9 @@ for index, data_vector in enumerate(weather_data_array):
 
             # stop reproducing particles if the number of births has exceeded the threshold. save the current birth
             # rate, so you can compare in the next time step
-            if num_reproduced > (0.01 * population_log):
-                num_reproduced_t0 = num_reproduced
-                can_reproduce = False
+            # if num_reproduced > (0.01 * population_log):
+            #     num_reproduced_t0 = num_reproduced
+            #     can_reproduce = False
 
             # kill particles
             # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
