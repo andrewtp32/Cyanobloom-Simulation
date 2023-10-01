@@ -104,5 +104,5 @@ for index, filename in enumerate(filename_list[::24]):
     ax0.set_title(f"{filename} - {len(ground_truths_x)}")
     ax0.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
     ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
-    plt.pause(0.01)
+    plt.pause(0.05)
     plt.cla()

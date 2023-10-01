@@ -684,7 +684,7 @@ for index, data_vector in enumerate(weather_data_array):
     # pull out just the coordinates
     month_df_coordinates = month_df[['x', 'y']].copy()
     # pull out just the extremely hot data points, then just to coordinates
-    month_df_hot = month_df.loc[(month_df['labels'] == 4)]
+    month_df_hot = month_df.loc[(month_df['labels'] >= 3)]
     month_df_hot = month_df_hot[['x', 'y']].copy()
     # convert dataframe to a numpy object
     month_df.to_numpy()
@@ -713,7 +713,7 @@ for index, data_vector in enumerate(weather_data_array):
             rand_mh = np.random.rand()
 
             # provide randomness so that the same spots aren't the only ones reproducing every time
-            if rand_mh <= 0.01:
+            if rand_mh <= 0.005:
                 particle_array = np.append(particle_array, [mh], axis=0)
                 num_births += 1
 
@@ -752,6 +752,11 @@ for index, data_vector in enumerate(weather_data_array):
             # reproduce particles
             if can_reproduce:
                 # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
+                if (hotspot_data_at_coordinate[5] >= 4) and (degree_bloom_appearance >= 1) and (rand <= 0.001):
+                    # append the reproduced particles
+                    particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
+                    num_reproduced += 1
+                # if jess data is "hot" and the deg bloom appearance is low or more, then reproduce
                 if (hotspot_data_at_coordinate[5] >= 3) and (degree_bloom_appearance >= 9) and (rand <= 0.001):
                     # append the reproduced particles
                     particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
@@ -772,31 +777,25 @@ for index, data_vector in enumerate(weather_data_array):
                     particle_array = np.append(particle_array, generate_gaussian_distribution(particle, 1), axis=0)
                     num_reproduced += 1
 
-            # stop reproducing particles if the number of births has exceeded the threshold. save the current birth
-            # rate, so you can compare in the next time step
-            # if num_reproduced > (0.01 * population_log):
-            #     num_reproduced_t0 = num_reproduced
-            #     can_reproduce = False
-
             # kill particles
             # if jess data is " very hot" and the deg bloom disappearance very high or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.005):
+            if ((hotspot_data_at_coordinate[5] == 4) and (degree_bloom_disappearance >= 75)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "hot" and the deg bloom disappearance is high or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 3) and (degree_bloom_disappearance >= 45)) and (rand <= 0.005):
+            if ((hotspot_data_at_coordinate[5] == 3) and (degree_bloom_disappearance >= 45)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "not significant" and the deg bloom disappearance is moderate or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 20)) and (rand <= 0.005):
+            if ((hotspot_data_at_coordinate[5] == 2) and (degree_bloom_disappearance >= 20)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "cold" and the deg bloom disappearance is low or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 9)) and (rand <= 0.005):
+            if ((hotspot_data_at_coordinate[5] == 1) and (degree_bloom_disappearance >= 9)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
             # if jess data is "very cold" and the deg bloom disappearance is very low or more, then kill
-            if ((hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 1)) and (rand <= 0.005):
+            if ((hotspot_data_at_coordinate[5] == 0) and (degree_bloom_disappearance >= 1)) and (rand <= 0.01):
                 # append the index to an array
                 deletion_index_array = (np.append(deletion_index_array, i)).astype(int)
 
