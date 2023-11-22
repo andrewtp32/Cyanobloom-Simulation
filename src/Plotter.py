@@ -33,14 +33,14 @@ month_coordinates_arr = np.array(month_df_coordinates)
 # reformat the coordinates
 month_coordinates_arr = convert_array_to_cartesian(month_coordinates_arr, [-70.09755158499999, 44.145137175])
 # scale down by a factor of 10
-month_coordinates_arr = month_coordinates_arr / 10
+# month_coordinates_arr = month_coordinates_arr / 10
 
 # save water boundary points
 with open(f"{(os.getcwd())[:-4]}/jess_sat_data/water_boundary_points_scaled.txt", "w") as gt_file:
     # write the values to the file
     np.savetxt(gt_file, month_coordinates_arr[::3], '%f')
 
-""" --------------- Line graphs of the particle population at each step --------------- """
+""" --------------- Line graphs of the particle population at each step --------------- 
 # create a plot
 fig1, ax1 = plt.subplots()
 
@@ -77,6 +77,7 @@ ax1.grid(which='both')
 ax1.grid(which='minor', alpha=0.2)
 ax1.grid(which='major', alpha=0.5)
 plt.show()
+"""
 
 """ --------------- Plot of all the GTs on the lake --------------- """
 
@@ -104,5 +105,5 @@ for index, filename in enumerate(filename_list[::24]):
     ax0.set_title(f"{filename} - {len(ground_truths_x)}")
     ax0.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
     ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
-    plt.pause(0.05)
+    plt.pause(10)
     plt.cla()

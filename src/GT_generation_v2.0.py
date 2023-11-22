@@ -489,8 +489,8 @@ class BloomGUI:
 def convert_array_to_cartesian(global_coordinate_arr, center_point):
     # move to origin
     arr_at_origin = global_coordinate_arr - center_point
-    # scale to meters (meters * 1/10) and return
-    return arr_at_origin * 11113.9
+    # scale to meters and return
+    return arr_at_origin * 111139
 
 
 def place_into_csv_file(array_of_points, dat, tim, win_spe, win_dir, temp, save_path, file_name):
