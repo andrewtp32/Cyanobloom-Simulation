@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="56bffe14-8b4c-422f-8fd7-27db5fccb65a" name="Changes" comment="" />
+=======
     <list default="true" id="56bffe14-8b4c-422f-8fd7-27db5fccb65a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jess_sat_data/hotspots_monthyear.csv" beforeDir="false" />
     </list>
+>>>>>>> 24b3a54bc6204d9c869c08641a90320bb981547b
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
