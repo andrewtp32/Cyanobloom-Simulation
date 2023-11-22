@@ -9,7 +9,7 @@ def convert_array_to_cartesian(global_coordinate_arr, center_point):
     # move to origin
     arr_at_origin = global_coordinate_arr - center_point
     # scale to meters and return
-    return arr_at_origin * 111139
+    return arr_at_origin * 11113.9
 
 
 # assign the directory of all the resultant files
@@ -104,6 +104,9 @@ for index, filename in enumerate(filename_list[::24]):
     # create figure for each time step
     ax0.set_title(f"{filename} - {len(ground_truths_x)}")
     ax0.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=3)
-    plt.pause(10)
+    ax0.scatter([150, 15, -125, -120, 10, 60, -70], [200, 180, 110, -40, -40, -210, -210], color="yellow", s=15)
+    # ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=15)
+    plt.pause(1500)
     plt.cla()
+
+
