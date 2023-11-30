@@ -129,6 +129,7 @@ class CameraImageViewer(object):
             T_world_camera = np.dot(T_world_drone, T_drone_camera)
 
             # -------------- 4. Compute pose of cyanobloom corners in the camera frame -------------------
+            # this is done so that the shapes change size based on what angle / how far away the camera is
 
             # Obtain inverse of the T_world_camera
             T_camera_world = np.linalg.inv(T_world_camera)
