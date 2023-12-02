@@ -127,12 +127,12 @@ class CameraImageViewer(object):
 
             # T is the transformation matrix. This is the T from the world to the camera frame
             T_world_camera = np.dot(T_world_drone, T_drone_camera)
+            
+            # Obtain inverse of the T_world_camera
+            T_camera_world = np.linalg.inv(T_world_camera)
 
             # -------------- 4. Compute pose of cyanobloom corners in the camera frame -------------------
             # this is done so that the shapes change size based on what angle / how far away the camera is
-
-            # Obtain inverse of the T_world_camera
-            T_camera_world = np.linalg.inv(T_world_camera)
 
             # each cell is a 30m x 30m square. calc the corners for the 2D projection
             # calc the "start point" (top-left corner) of the cyanobloom square
