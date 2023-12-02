@@ -39,7 +39,7 @@ class CameraImageViewer(object):
         bloomToDroneDistance = []
 
         # declaring list for pixel locations
-        bloomPoseImagePixelList = []
+        bloomPoseImagePixelArray = np.array([], np.int32)
 
         # For loop iterates each of the bloom poses
         for bloomPoseWorldFrame4D in self.bloomPoseWorldFrame4DList:
@@ -127,7 +127,7 @@ class CameraImageViewer(object):
 
             # T is the transformation matrix. This is the T from the world to the camera frame
             T_world_camera = np.dot(T_world_drone, T_drone_camera)
-            
+
             # Obtain inverse of the T_world_camera
             T_camera_world = np.linalg.inv(T_world_camera)
 
@@ -145,14 +145,27 @@ class CameraImageViewer(object):
                                                   [bloomPoseWorldFrame4D[1] - 15],
                                                   [bloomPoseWorldFrame4D[2]],
                                                   [bloomPoseWorldFrame4D[3]]]
+            top_right_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] + 15],
+                                               [bloomPoseWorldFrame4D[1] + 15],
+                                               [bloomPoseWorldFrame4D[2]],
+                                               [bloomPoseWorldFrame4D[3]]]
+            # calc the "end point" (bottom-right corner) of the cyanobloom square
+            bottom_left_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] - 15],
+                                                 [bloomPoseWorldFrame4D[1] - 15],
+                                                 [bloomPoseWorldFrame4D[2]],
+                                                 [bloomPoseWorldFrame4D[3]]]
 
             # Homogeneous 4D vector of the bloom pose in the camera frame
             top_left_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, top_left_bloomPoseWorldFrame4D)
             bottom_right_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bottom_right_bloomPoseWorldFrame4D)
+            top_right_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, top_right_bloomPoseWorldFrame4D)
+            bottom_left_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bottom_left_bloomPoseWorldFrame4D)
 
             # Converting 4D vector into a 3D vector
             top_left_BCF = top_left_bloomPoseCameraFrame4DVector[0:3, 0:1]
             bottom_right_BCF = bottom_right_bloomPoseCameraFrame4DVector[0:3, 0:1]
+            top_right_BCF = top_right_bloomPoseCameraFrame4DVector[0:3, 0:1]
+            bottom_left_BCF = bottom_left_bloomPoseCameraFrame4DVector[0:3, 0:1]
 
             # -------------- 5. Obtain pinhole camera model from bloom pose in camera frame -------------------
 
@@ -167,11 +180,19 @@ class CameraImageViewer(object):
             top_left_yI = ((alphaYF * top_left_BCF[0][1]) / top_left_BCF[0][2]) + y0
             bottom_right_xI = ((alphaXF * bottom_right_BCF[0][0]) / bottom_right_BCF[0][2]) + x0
             bottom_right_yI = ((alphaYF * bottom_right_BCF[0][1]) / bottom_right_BCF[0][2]) + y0
+            top_right_xI = ((alphaXF * top_left_BCF[0][0]) / top_right_BCF[0][2]) + x0
+            top_right_yI = ((alphaYF * top_left_BCF[0][1]) / top_right_BCF[0][2]) + y0
+            bottom_left_xI = ((alphaXF * bottom_right_BCF[0][0]) / bottom_left_BCF[0][2]) + x0
+            bottom_left_yI = ((alphaYF * bottom_right_BCF[0][1]) / bottom_left_BCF[0][2]) + y0
 
-            pixel_locations = [int(top_left_xI), int(top_left_yI), int(bottom_right_xI), int(bottom_right_yI)]
+            pixel_locations = np.array([top_left_xI, top_left_yI, bottom_right_xI, bottom_right_yI,
+                                        top_right_xI, top_right_yI, bottom_left_xI, bottom_left_yI])
 
-            # add all the pixel coordinates to a list
-            bloomPoseImagePixelList.append(pixel_locations)
+            # convert to np.int32
+            pixel_locations = pixel_locations.astype(np.int32)
+
+            # stack pixel locations to array
+            np.vstack((bloomPoseImagePixelArray, pixel_locations))
 
         # -------------- draw shapes on image and publish -------------------
 
@@ -180,9 +201,11 @@ class CameraImageViewer(object):
         cv_overlay = cv_image.copy()
 
         # apply each pixel to an overlay
-        for pixels in bloomPoseImagePixelList:
+        for pixels in bloomPoseImagePixelArray:
+            # reshape into an array of shape ROWSx1x2 (ROWS are number of vertices)
+            pixels = pixels.reshape((-1, 1, 2))
             # draw a yellow circle on camera image at the augmented point of bloom
-            cv2.rectangle(cv_overlay, (pixels[0], pixels[1]), (pixels[2], pixels[3]), (255, 255, 0), -1)
+            cv2.fillPoly(cv_overlay, [pixels], (255, 255, 0))
 
         # apply the overlay
         cv2.addWeighted(cv_overlay, 0.3, cv_output, 0.7, 0, cv_output)
