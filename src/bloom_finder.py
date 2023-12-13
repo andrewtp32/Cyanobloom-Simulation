@@ -91,8 +91,8 @@ class BloomLocator(object):
 
         # Bloom color is yellow. In RGB, the color is (255, 255, 0)
         # Define range of yellow color in HSV
-        lower_yellow = np.array([40, 100, 100])
-        upper_yellow = np.array([100, 255, 255])
+        lower_yellow = np.array([100, 30, 50])
+        upper_yellow = np.array([140, 255, 255])
 
         # Threshold the HSV image to get only yellow colors
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
