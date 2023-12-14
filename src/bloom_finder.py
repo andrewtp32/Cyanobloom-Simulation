@@ -124,7 +124,7 @@ class BloomLocator(object):
         # Camera parameter for the focal in the x direction
         cameraAlphaXF = 185.69
         # The number of meters we want between each traced point
-        tracedBloomDistanceMeters = 2
+        tracedBloomDistanceMeters = 10
 
         # The number of pixels we want between each traced point
         tracedBloomDistancePixels = (cameraAlphaXF / droneHeight) * tracedBloomDistanceMeters
