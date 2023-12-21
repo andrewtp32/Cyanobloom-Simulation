@@ -28,9 +28,9 @@
 
 	<!-- Launch nodes -->
 	<node name="drone_keyboard" pkg="sjtu_drone" type="drone_keyboard"/>
-	<node name="waypoint_manager" pkg="cyanobloom-simulation" type="waypoint_manager.py" output="screen"/>
-	<node name="command_drone_velocities" pkg="cyanobloom-simulation" type="command_drone_velocities.py"/>
-	<node name="drone_camera_AR" pkg="cyanobloom-simulation" type="drone_camera_AR.py"/>
+	<!-- <node name="waypoint_manager" pkg="cyanobloom-simulation" type="waypoint_manager.py" output="screen"/> -->
+	<!-- <node name="command_drone_velocities" pkg="cyanobloom-simulation" type="command_drone_velocities.py"/> -->
+	<node name="drone_camera_AR" pkg="cyanobloom-simulation" type="drone_camera_AR.py" output="screen"/>
 	<node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/> 
 	<node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/> 
 

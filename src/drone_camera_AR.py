@@ -24,22 +24,34 @@ class CameraImageViewer(object):
         self.image_pub = rospy.Publisher("/drone/down_camera/bloom_filter", Image, queue_size=1)
         # print("3")
 
-    # def callback_diagnostics(self,msg):
-
     def camera_callback(self, Image):  # "data" is the image coming from the callback
         # print("4")
+
+        # adding in as test point here for testing
+        self.bloomPoseWorldFrame4DList = np.array([[[0.0],
+                                                    [0.0],
+                                                    [0.75],
+                                                    [1.0]],
+                                                   [[15.0],
+                                                    [15.0],
+                                                    [0.75],
+                                                    [1.0]],
+                                                   [[-30.0],
+                                                    [-30.0],
+                                                    [0.75],
+                                                    [1.0]]])
 
         # Converting to a CV image
         cv_image = self.bridge_object.imgmsg_to_cv2(Image, desired_encoding="passthrough")
 
         # show the image for testing
-        cv2.imshow("Original image", cv_image)
+        # cv2.imshow("Original image", cv_image)
 
         # declaring bloom to drone distance
         bloomToDroneDistance = []
 
         # declaring list for pixel locations
-        bloomPoseImagePixelArray = np.array([], np.int32)
+        bloomPoseImagePixelArray = np.zeros(8, np.int32)
 
         # For loop iterates each of the bloom poses
         for bloomPoseWorldFrame4D in self.bloomPoseWorldFrame4DList:
@@ -136,25 +148,24 @@ class CameraImageViewer(object):
 
             # each cell is a 30m x 30m square. calc the corners for the 2D projection
             # calc the "start point" (top-left corner) of the cyanobloom square
-            top_left_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] - 15],
-                                              [bloomPoseWorldFrame4D[1] + 15],
-                                              [bloomPoseWorldFrame4D[2]],
-                                              [bloomPoseWorldFrame4D[3]]]
+            top_left_bloomPoseWorldFrame4D = [bloomPoseWorldFrame4D[0] - 15,
+                                              bloomPoseWorldFrame4D[1] + 15,
+                                              bloomPoseWorldFrame4D[2],
+                                              bloomPoseWorldFrame4D[3]]
             # calc the "end point" (bottom-right corner) of the cyanobloom square
-            bottom_right_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] + 15],
-                                                  [bloomPoseWorldFrame4D[1] - 15],
-                                                  [bloomPoseWorldFrame4D[2]],
-                                                  [bloomPoseWorldFrame4D[3]]]
-            top_right_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] + 15],
-                                               [bloomPoseWorldFrame4D[1] + 15],
-                                               [bloomPoseWorldFrame4D[2]],
-                                               [bloomPoseWorldFrame4D[3]]]
+            bottom_right_bloomPoseWorldFrame4D = [bloomPoseWorldFrame4D[0] + 15,
+                                                  bloomPoseWorldFrame4D[1] - 15,
+                                                  bloomPoseWorldFrame4D[2],
+                                                  bloomPoseWorldFrame4D[3]]
+            top_right_bloomPoseWorldFrame4D = [bloomPoseWorldFrame4D[0] + 15,
+                                               bloomPoseWorldFrame4D[1] + 15,
+                                               bloomPoseWorldFrame4D[2],
+                                               bloomPoseWorldFrame4D[3]]
             # calc the "end point" (bottom-right corner) of the cyanobloom square
-            bottom_left_bloomPoseWorldFrame4D = [[bloomPoseWorldFrame4D[0] - 15],
-                                                 [bloomPoseWorldFrame4D[1] - 15],
-                                                 [bloomPoseWorldFrame4D[2]],
-                                                 [bloomPoseWorldFrame4D[3]]]
-
+            bottom_left_bloomPoseWorldFrame4D = [bloomPoseWorldFrame4D[0] - 15,
+                                                 bloomPoseWorldFrame4D[1] - 15,
+                                                 bloomPoseWorldFrame4D[2],
+                                                 bloomPoseWorldFrame4D[3]]
             # Homogeneous 4D vector of the bloom pose in the camera frame
             top_left_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, top_left_bloomPoseWorldFrame4D)
             bottom_right_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bottom_right_bloomPoseWorldFrame4D)
@@ -162,10 +173,10 @@ class CameraImageViewer(object):
             bottom_left_bloomPoseCameraFrame4DVector = np.dot(T_camera_world, bottom_left_bloomPoseWorldFrame4D)
 
             # Converting 4D vector into a 3D vector
-            top_left_BCF = top_left_bloomPoseCameraFrame4DVector[0:3, 0:1]
-            bottom_right_BCF = bottom_right_bloomPoseCameraFrame4DVector[0:3, 0:1]
-            top_right_BCF = top_right_bloomPoseCameraFrame4DVector[0:3, 0:1]
-            bottom_left_BCF = bottom_left_bloomPoseCameraFrame4DVector[0:3, 0:1]
+            top_left_BCF = top_left_bloomPoseCameraFrame4DVector[0:3]
+            bottom_right_BCF = bottom_right_bloomPoseCameraFrame4DVector[0:3]
+            top_right_BCF = top_right_bloomPoseCameraFrame4DVector[0:3]
+            bottom_left_BCF = bottom_left_bloomPoseCameraFrame4DVector[0:3]
 
             # -------------- 5. Obtain pinhole camera model from bloom pose in camera frame -------------------
 
@@ -176,23 +187,22 @@ class CameraImageViewer(object):
             y0 = 180.5
 
             # get the x and y values of the pixel that corresponds to the bloom's pose in the camera frame
-            top_left_xI = ((alphaXF * top_left_BCF[0][0]) / top_left_BCF[0][2]) + x0
-            top_left_yI = ((alphaYF * top_left_BCF[0][1]) / top_left_BCF[0][2]) + y0
-            bottom_right_xI = ((alphaXF * bottom_right_BCF[0][0]) / bottom_right_BCF[0][2]) + x0
-            bottom_right_yI = ((alphaYF * bottom_right_BCF[0][1]) / bottom_right_BCF[0][2]) + y0
-            top_right_xI = ((alphaXF * top_left_BCF[0][0]) / top_right_BCF[0][2]) + x0
-            top_right_yI = ((alphaYF * top_left_BCF[0][1]) / top_right_BCF[0][2]) + y0
-            bottom_left_xI = ((alphaXF * bottom_right_BCF[0][0]) / bottom_left_BCF[0][2]) + x0
-            bottom_left_yI = ((alphaYF * bottom_right_BCF[0][1]) / bottom_left_BCF[0][2]) + y0
+            top_left_xI = ((alphaXF * top_left_BCF[0]) / top_left_BCF[2]) + x0
+            top_left_yI = ((alphaYF * top_left_BCF[1]) / top_left_BCF[2]) + y0
+            bottom_right_xI = ((alphaXF * bottom_right_BCF[0]) / bottom_right_BCF[2]) + x0
+            bottom_right_yI = ((alphaYF * bottom_right_BCF[1]) / bottom_right_BCF[2]) + y0
+            top_right_xI = ((alphaXF * top_right_BCF[0]) / top_right_BCF[2]) + x0
+            top_right_yI = ((alphaYF * top_right_BCF[1]) / top_right_BCF[2]) + y0
+            bottom_left_xI = ((alphaXF * bottom_left_BCF[0]) / bottom_left_BCF[2]) + x0
+            bottom_left_yI = ((alphaYF * bottom_left_BCF[1]) / bottom_left_BCF[2]) + y0
 
-            pixel_locations = np.array([top_left_xI, top_left_yI, bottom_right_xI, bottom_right_yI,
-                                        top_right_xI, top_right_yI, bottom_left_xI, bottom_left_yI])
+            pixel_locations = np.array([top_left_xI, top_left_yI, top_right_xI, top_right_yI,
+                                        bottom_right_xI, bottom_right_yI, bottom_left_xI, bottom_left_yI]).ravel()
 
             # convert to np.int32
             pixel_locations = pixel_locations.astype(np.int32)
-
             # stack pixel locations to array
-            np.vstack((bloomPoseImagePixelArray, pixel_locations))
+            bloomPoseImagePixelArray = np.vstack((bloomPoseImagePixelArray, pixel_locations))
 
         # -------------- draw shapes on image and publish -------------------
 
@@ -200,15 +210,19 @@ class CameraImageViewer(object):
         cv_output = cv_image.copy()
         cv_overlay = cv_image.copy()
 
-        # apply each pixel to an overlay
-        for pixels in bloomPoseImagePixelArray:
+        # test point
+
+        # apply each pixel to an overlay (skip the first index tho)
+        for pixels in bloomPoseImagePixelArray[1:]:
             # reshape into an array of shape ROWSx1x2 (ROWS are number of vertices)
             pixels = pixels.reshape((-1, 1, 2))
+            # for test
+            # cv2.circle(cv_overlay, (180, 120), 50, (255, 0, 0), -1)
             # draw a yellow circle on camera image at the augmented point of bloom
-            cv2.fillPoly(cv_overlay, [pixels], (255, 255, 0))
+            cv2.fillPoly(cv_overlay, [pixels], (144, 238, 144))
 
         # apply the overlay
-        cv2.addWeighted(cv_overlay, 0.3, cv_output, 0.7, 0, cv_output)
+        cv2.addWeighted(cv_overlay, 0.5, cv_output, 0.5, 0, cv_output)
 
         # cv2.imshow("AR image", cv_output)
         cv2.waitKey(3)
@@ -228,8 +242,11 @@ class CameraImageViewer(object):
         self.oz = Pose.orientation.z
         self.ow = Pose.orientation.w
 
+        # print(self.px, self.py, self.pz)
+
     def pointcloud_callback(self, PointCloud):
         if self.bloomfilename != PointCloud.header.frame_id:  # prevents updating for each msg. only update when new points received
+            # adding in as test point here for testing
             self.bloomPoseWorldFrame4DList = []
             # run_once = 0
             # while 1:
