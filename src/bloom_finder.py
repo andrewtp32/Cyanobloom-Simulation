@@ -91,11 +91,11 @@ class BloomLocator(object):
 
         # Bloom color is yellow. In RGB, the color is (255, 255, 0)
         # Define range of yellow color in HSV
-        lower_yellow = np.array([40, 100, 100])
-        upper_yellow = np.array([100, 255, 255])
+        lower_green = np.array([100, 30, 50])
+        upper_green = np.array([140, 255, 255])
 
         # Threshold the HSV image to get only yellow colors
-        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+        mask = cv2.inRange(hsv, lower_green, upper_green)
         # cv2.imshow("Mask Image", mask)
 
         # Circumscribe the perimeter of each shape
@@ -124,7 +124,7 @@ class BloomLocator(object):
         # Camera parameter for the focal in the x direction
         cameraAlphaXF = 185.69
         # The number of meters we want between each traced point
-        tracedBloomDistanceMeters = 2
+        tracedBloomDistanceMeters = 10
 
         # The number of pixels we want between each traced point
         tracedBloomDistancePixels = (cameraAlphaXF / droneHeight) * tracedBloomDistanceMeters
