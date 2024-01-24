@@ -40,7 +40,7 @@ with open(f"{(os.getcwd())[:-4]}/jess_sat_data/water_boundary_points_scaled.txt"
     # write the values to the file
     np.savetxt(gt_file, month_coordinates_arr[::3], '%f')
 
-""" --------------- Line graphs of the particle population at each step --------------- 
+""" --------------- Line graphs of the particle population at each step --------------- """
 # create a plot
 fig1, ax1 = plt.subplots()
 
@@ -68,7 +68,8 @@ minor_ticks = [0, 186, 372, 558, 744,
                2394, 2580, 2766, 2952,
                3132, 3312, 3492, 3672,
                3858, 4044, 4230, 4414]
-ax1.set_xticks(month_ticks, ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
+ax1.set_xticks(month_ticks)
+ax1.set_xticklabels(['May', 'June', 'July', 'Aug', 'Sep', 'Oct'])
 ax1.set_xticks(minor_ticks, minor=True)
 
 # And a corresponding grid+2
@@ -77,7 +78,6 @@ ax1.grid(which='both')
 ax1.grid(which='minor', alpha=0.2)
 ax1.grid(which='major', alpha=0.5)
 plt.show()
-"""
 
 """ --------------- Plot of all the GTs on the lake --------------- """
 
@@ -104,9 +104,9 @@ for index, filename in enumerate(filename_list[::24]):
     # create figure for each time step
     ax0.set_title(f"{filename} - {len(ground_truths_x)}")
     ax0.scatter(month_coordinates_arr_x, month_coordinates_arr_y, color="blue")
-    ax0.scatter([150, 15, -125, -120, 10, 60, -70], [200, 180, 110, -40, -40, -210, -210], color="yellow", s=15)
-    # ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=15)
-    plt.pause(1500)
+    # ax0.scatter([150, 15, -125, -120, 10, 60, -70], [200, 180, 110, -40, -40, -210, -210], color="yellow", s=15)
+    ax0.scatter(ground_truths_x, ground_truths_y, color="green", s=15)
+    plt.pause(0.25)
     plt.cla()
 
 

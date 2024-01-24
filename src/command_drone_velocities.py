@@ -17,9 +17,9 @@ error_integral_z = 0
 error_previous_x = 0
 error_previous_y = 0
 error_previous_z = 0
-desired_x = 50
-desired_y = 50
-desired_z = 80
+desired_x = 0
+desired_y = 0
+desired_z = 40
 
 
 # this is our callback function: it is executed any time a message on the specified topic

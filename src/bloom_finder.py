@@ -19,18 +19,15 @@ class BloomLocator(object):
         print("2")
         self.px, self.py, self.pz, self.ox, self.oy, self.oz, self.ow = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         self.orientation_q = []
-        self.image_sub = rospy.Subscriber("/drone/front_camera/image_raw/bloom", Image, self.camera_callback)
-        self.pose_sub = rospy.Subscriber("/drone_0/gt_pose", Pose, self.pose_callback)
+        self.image_sub = rospy.Subscriber("/drone/down_camera/bloom_filter", Image, self.camera_callback)
+        self.pose_sub = rospy.Subscriber("/drone/gt_pose", Pose, self.pose_callback)
         self.bridge_object = CvBridge()
-        self.image_pub = rospy.Publisher("/drone/front_camera/image_raw/bloom_locator", Image, queue_size=1)
+        self.image_pub = rospy.Publisher("/drone/down_camera/bloom_locator", Image, queue_size=1)
         self.pointcloud_pub = rospy.Publisher("/bloom_locations_topic", PointCloud)
         print("3")
 
     def camera_callback(self, Image):  # "data" is the image coming from the callback
         print("4")
-
-        # Converting drone's filtered camera image to a CV image
-        img = self.bridge_object.imgmsg_to_cv2(Image, desired_encoding="passthrough")
 
         # -------------- 1. Preform homogeneous transformations from camera frame to the world frame -------------------
 
@@ -77,47 +74,31 @@ class BloomLocator(object):
 
         # print("HTM from world to camera: ", T_world_camera)
 
-        # -------------- 2. Use OpenCV to determine the X,Y position of the bloom in the camera image -------------------
+        # -------------- 2. Use OpenCV to determine the X,Y position of the bloom in the camera image ------------------
 
-        # show untouched image
-        # cv2.imshow("Raw image", img)
+        # Converting drone's filtered camera image to a CV image
+        try:
+            img = self.bridge_object.imgmsg_to_cv2(Image, desired_encoding="bgr8")
+        except CvBridgeError as e:
+            print(e)
         # Initialize a new image (used in line 115)
         imgWithBoundingRectangles = img.copy()
         # Initialize a new image (used in line 102)
-        imgWithDrawnContours = img.copy()
         imgWithTracedPoints = img.copy()
+        imgWithDrawnContours = img.copy()
         # Converting RGB to HSV
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        # Bloom color is yellow. In RGB, the color is (255, 255, 0)
-        # Define range of yellow color in HSV
-        lower_green = np.array([100, 30, 50])
-        upper_green = np.array([140, 255, 255])
+        # Bloom color is 'light green'. In RGB, the color is (0, 255, 0).
 
         # Threshold the HSV image to get only yellow colors
-        mask = cv2.inRange(hsv, lower_green, upper_green)
-        # cv2.imshow("Mask Image", mask)
+        mask = cv2.inRange(hsv, (36, 0, 0), (86, 255, 255))
 
         # Circumscribe the perimeter of each shape
-        _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
-                                          cv2.CHAIN_APPROX_SIMPLE)  # cv2.RETR_EXTERNAL is good for finding outer corners of canny image
+        # cv2.RETR_EXTERNAL is good for finding outer corners of canny image
+        _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # Draw the contour lines onto "imgWithDrawnContours"
-        cv2.drawContours(imgWithDrawnContours, contours, -1, (255, 0, 0), 2)
-
-        # # Initialize list of center points
-        # centerPoints = []
-        #
-        # # This for-loop's purpose is to isolate each bloom and calculate the center point
-        # for cnt in contours:
-        #     area = cv2.contourArea(cnt)  # calculate area of the given shape
-        #     if area > 10:
-        #         peri = cv2.arcLength(cnt, True)
-        #         approx = cv2.approxPolyDP(cnt, 0.02*peri, True)  # count the amount of corners
-        #         # object_corners = len(approx)  # count the amount of corners
-        #         x, y, width, height = cv2.boundingRect(approx)  # create an imaginary rectangle around the shape
-        #         cv2.rectangle(imgWithBoundingRectangles, (x,y), (x+width, y+height),(0, 0, 255), 2) # draw a rectangle about each detected shape onto "imgWithBoundingRectangles"
-        #         point = [int(x+(width/2)), int(y+(height/2))] # calculate center point
-        #         centerPoints.append(point)
+        cv2.drawContours(imgWithDrawnContours, contours, -1, (255, 255, 0), 2)
 
         # distance between the drone and the water surface
         droneHeight = self.pz
@@ -129,7 +110,7 @@ class BloomLocator(object):
         # The number of pixels we want between each traced point
         tracedBloomDistancePixels = (cameraAlphaXF / droneHeight) * tracedBloomDistanceMeters
 
-        # get all of the points that are within the calculated contours
+        # get all the points that are within the calculated contours
         pointsWithinContoursList = []
         range_x = range(0, 640, int(tracedBloomDistancePixels))
         range_y = range(0, 360, int(tracedBloomDistancePixels))
@@ -139,15 +120,16 @@ class BloomLocator(object):
                     result = cv2.pointPolygonTest(cnt, (x, y), False)
                     if result == 1.0:
                         pointsWithinContoursList.append([x, y])
-                        cv2.circle(imgWithTracedPoints, (x, y), 2, (0, 0, 255), -1)
+                        cv2.circle(imgWithTracedPoints, (x, y), 2, (0, 0, 200), -1)
 
-        # cv2.imshow("Image with traced points", imgWithTracedPoints)
+        cv2.imshow("Original Image", img)
+        cv2.imshow("Mask", mask)
+        cv2.imshow("Image With Traced Points", imgWithTracedPoints)
+        cv2.imshow("Drawn Contours", imgWithDrawnContours)
 
-        # cv2.imshow("Drawn Contours", imgWithDrawnContours)
-        # cv2.imshow("Drawn Rectangles", imgWithBoundingRectangles)
         cv2.waitKey(3)
 
-        # -------------- 3. Convert each X,Y point in the image into X,Y,Z coordinates with respect to the camera -------------------
+        # ----- 3. Convert each X,Y point in the image into X,Y,Z coordinates with respect to the camera -----
 
         # parameters for the drone's camera
         alphaXF = 185.69
@@ -277,8 +259,11 @@ class BloomLocator(object):
         # -------------- 7. Publish messages to topics -------------------
 
         # Converting back to a ros image and publishing
-        msg = self.bridge_object.cv2_to_imgmsg(mask, encoding="8UC1")  # converting crop_img from cv to ros msg
-        self.image_pub.publish(msg)
+        try:
+            # converting crop_img from cv to ros msg
+            self.image_pub.publish(self.bridge_object.cv2_to_imgmsg(imgWithTracedPoints, encoding="8UC1"))
+        except CvBridgeError as e:
+            print(e)
 
         # Publishing point cloud to /bloom_locations_topic
         self.pointcloud_pub.publish(coordinate_pointcloud)

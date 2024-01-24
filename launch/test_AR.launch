@@ -27,10 +27,11 @@
 	<node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model sjtu_drone -x 0 -y 0 -z 0" respawn="false" output="screen" />
 
 	<!-- Launch nodes -->
-	<node name="drone_keyboard" pkg="sjtu_drone" type="drone_keyboard"/>
+	<node name="drone_keyboard" pkg="sjtu_drone" type="drone_keyboard"  output="screen"/>
 	<!-- <node name="waypoint_manager" pkg="cyanobloom-simulation" type="waypoint_manager.py" output="screen"/> -->
 	<!-- <node name="command_drone_velocities" pkg="cyanobloom-simulation" type="command_drone_velocities.py"/> -->
-	<node name="drone_camera_AR" pkg="cyanobloom-simulation" type="drone_camera_AR.py" output="screen"/>
+	<node name="bloom_finder" pkg="cyanobloom-simulation" type="bloom_finder.py"/>
+	<node name="drone_camera_AR" pkg="cyanobloom-simulation" type="drone_camera_AR.py"/>
 	<node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/> 
 	<node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/> 
 

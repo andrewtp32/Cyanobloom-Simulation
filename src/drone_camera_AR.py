@@ -218,8 +218,8 @@ class CameraImageViewer(object):
             pixels = pixels.reshape((-1, 1, 2))
             # for test
             # cv2.circle(cv_overlay, (180, 120), 50, (255, 0, 0), -1)
-            # draw a yellow circle on camera image at the augmented point of bloom
-            cv2.fillPoly(cv_overlay, [pixels], (144, 238, 144))
+            # draw a 'light green' circle on camera image at the augmented point of bloom
+            cv2.fillPoly(cv_overlay, [pixels], (0, 255, 0))
 
         # apply the overlay
         cv2.addWeighted(cv_overlay, 0.5, cv_output, 0.5, 0, cv_output)
